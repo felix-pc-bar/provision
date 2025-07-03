@@ -3,6 +3,14 @@ project(barbershop)
 
 set(CMAKE_CXX_STANDARD 17)
 
+# SDL2
+set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2-2.32.8")
+
+include_directories("${SDL2_ROOT}/include")
+link_directories("${SDL2_ROOT}/lib/x64")
+
 add_executable(barbershop
     src/main.cpp
 )
+
+target_link_libraries(barbershop SDL2main SDL2)
