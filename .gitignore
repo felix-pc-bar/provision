@@ -7,6 +7,15 @@
 *.o
 *.obj
 
+# extra
+/build/
+/.vs/
+/out/
+/CMakeSettings.json
+*.log
+*.tlog
+*.vcxproj.FileListAbsolute.txt
+
 # Precompiled Headers
 *.gch
 *.pch
@@ -40,4 +49,3 @@
 # debug information files
 *.dwo
 
-build/

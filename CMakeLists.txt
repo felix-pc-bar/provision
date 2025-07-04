@@ -12,5 +12,9 @@ link_directories("${SDL2_ROOT}/lib/x64")
 add_executable(barbershop
     src/main.cpp
 )
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set_target_properties(barbershop PROPERTIES
+    LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+)
 
 target_link_libraries(barbershop SDL2main SDL2)
