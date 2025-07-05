@@ -26,4 +26,5 @@ void CPURenderer::Present()
 {
     SDL_UpdateTexture(texture, nullptr, pixelBuffer.data(), width * sizeof(uint32_t));
     SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
+    SDL_RenderPresent(sdlRenderer);
 }

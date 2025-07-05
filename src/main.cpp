@@ -26,17 +26,6 @@ int main(int argc, char** args) {
 		return 1;
 	}
 
-	// Create our window
-	//window = SDL_CreateWindow("Barbershop", 0, 0, 1920, 1080, SDL_WINDOW_FULLSCREEN_DESKTOP);
-	// Make sure creating the window succeeded
-	//if (!window) 
-	//{
-	//	cout << "Error creating window: " << SDL_GetError() << endl;
-	//	system("pause");
-	//	// End the program
-	//	return 1;
-	//}
-	//
 	result = SDL_CreateWindowAndRenderer(1920, 1080, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &mainRenderer);
 	if (result < 0)
 	{
@@ -44,24 +33,19 @@ int main(int argc, char** args) {
 		return 1;
 	}
 	SDL_SetWindowTitle(window, "Barbershop");
-	//// Get the surface from the window
-	//winSurface = SDL_GetWindowSurface(window);
-
-	//// Make sure getting the surface succeeded
-	//if (!winSurface) 
-	//{
-	//	cout << "Error getting surface: " << SDL_GetError() << endl;
-	//	system("pause");
-	//	// End the program
-	//	return 1;
-	//}
-
-	//// Fill the window with a white rectangle
-	//SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 255, 255, 255));
-
-	//// Update the window display
-	//SDL_UpdateWindowSurface(window);
-
+	
+	CPURenderer vp(mainRenderer, 1920, 1080);
+	while (true)
+	{
+		for (int x = 0; x <= 1920; x++)
+		{
+			for (int y = 0; y <= 1080; y++)
+			{
+				vp.SetPixel(x, y, 0xFF20FF00);
+			}
+			vp.Present();
+		}
+	}
 	// Wait
 	system("pause");
 
