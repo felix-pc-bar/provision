@@ -11,7 +11,7 @@ link_directories("${SDL2_ROOT}/lib/x64")
 
 add_executable(barbershop
     src/main.cpp
- "src/render/CPURenderer.cpp" "src/render/CPURenderer.h")
+ "src/render/CPURenderer.cpp" "src/render/CPURenderer.h" "src/engTools.cpp" "src/engTools.h")
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(barbershop PROPERTIES
     LINK_FLAGS "/SUBSYSTEM:CONSOLE"

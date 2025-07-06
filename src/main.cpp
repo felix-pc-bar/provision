@@ -6,7 +6,6 @@
 
 using std::endl, std::cout;
 
-// You must include the command line parameters for your main function to be recognized by SDL
 int main(int argc, char** args) {
 
 	// Pointers to our window and surface
@@ -35,26 +34,12 @@ int main(int argc, char** args) {
 	SDL_SetWindowTitle(window, "Barbershop");
 	
 	CPURenderer vp(mainRenderer, 1920, 1080);
-	while (true)
-	{
-		for (int x = 0; x <= 1920; x++)
-		{
-			for (int y = 0; y <= 1080; y++)
-			{
-				vp.SetPixel(x, y, 0xFF20FF00);
-			}
-			vp.Present();
-		}
-	}
-	// Wait
+
 	system("pause");
 
-	// Destroy the window. This will also destroy the surface
 	SDL_DestroyWindow(window);
 
-	// Quit SDL
 	SDL_Quit();
 
-	// End the program
 	return 0;
 }

@@ -1,3 +1,0 @@
-F:/Creative raw/repos/barbershop/build/CMakeFiles/barbershop.dir
-F:/Creative raw/repos/barbershop/build/CMakeFiles/ALL_BUILD.dir
-F:/Creative raw/repos/barbershop/build/CMakeFiles/ZERO_CHECK.dir
