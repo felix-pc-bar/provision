@@ -1,4 +1,7 @@
 #include "CPURenderer.h"
+#include <iostream>
+
+using std::endl, std::cout;
 
 CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h) //Member initialiser list; constructer sets ob vars 
 {
@@ -30,12 +33,26 @@ void CPURenderer::drawMesh(Mesh& mesh)
 		Vertex3d v1 = mesh.vertices.at(mesh.indices.at(i));
 		Vertex3d v2 = mesh.vertices.at(mesh.indices.at(i+1));
 		Vertex3d v3 = mesh.vertices.at(mesh.indices.at(i+2));
-
+		drawTri(v1, v2, v3);
 	}
 }
 void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 {
-	
+	cout << "drawing tri:" << v1 << v2 << v3;
+	Point2d p1(v1);
+	Point2d p2(v2);
+	Point2d p3(v3);
+	bool valid1, valid2, valid3 = false; //Here we store the side of the point from each edge vector; false for negative edgeSideSS() return, and true for positive.
+	for (int y = 0; y < 1080; y++)
+	{
+		for (int x = 0; x < 1920; x++)
+		{
+			valid1 = (edgeSideSS(p1, p2, Point2d{ x,y }) > 0) ? true : false;
+			valid2 = (edgeSideSS(p2, p3, Point2d{ x,y }) > 0) ? true : false;
+			valid3 = (edgeSideSS(p3, p1, Point2d{ x,y }) > 0) ? true : false;
+			if (valid1 == valid2 && valid2 == valid3) { SetPixel(x, y, 0xFF20FF00); }
+		}
+	}
 }
 void CPURenderer::Present() 
 {

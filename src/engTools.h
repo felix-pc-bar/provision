@@ -2,15 +2,19 @@
 #include <SDL.h>
 #include <vector>
 #include <cstdint>
+#include <iostream>
 
-using std::vector;
+using std::vector, std::ostream;
 
 class Vertex3d
 {
 public:
-	Vertex3d(int xPos, int yPos, int zPos);
+	Vertex3d(double xPos, double yPos, double zPos);
 	double x, y, z;
+	friend ostream& operator<< (ostream& os, Vertex3d vert);
 };
+
+ostream& operator<< (ostream& os, Vertex3d vert);
 
 class Point2d
 {

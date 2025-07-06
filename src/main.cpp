@@ -34,6 +34,10 @@ int main(int argc, char** args) {
 	SDL_SetWindowTitle(window, "Barbershop");
 	
 	CPURenderer vp(mainRenderer, 1920, 1080);
+	
+	Mesh triangleMesh;
+	vp.drawMesh(triangleMesh);
+	vp.Present();
 
 	system("pause");
 
