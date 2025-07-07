@@ -6,15 +6,22 @@
 
 using std::vector, std::ostream;
 
+class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert)
+{
+public:
+	double x, y, z;
+	Position3d(double xPos, double yPos, double zPos);
+	Position3d();
+	friend ostream& operator<< (ostream& os, Position3d pos);
+};
+
 class Vertex3d
 {
 public:
-	Vertex3d(double xPos, double yPos, double zPos);
-	double x, y, z;
-	friend ostream& operator<< (ostream& os, Vertex3d vert);
+	Vertex3d(Position3d pos);
+	Position3d position; 
+	void offsetPosition(Position3d offset);
 };
-
-ostream& operator<< (ostream& os, Vertex3d vert);
 
 class Point2d
 {
@@ -35,6 +42,8 @@ public:
 	Mesh();
 	vector<Vertex3d> vertices; //vector of type Vertex
 	vector<int> indices; //stores tri indices as 3-tuple
+	void addVertex(Position3d pos);
+	void move(Position3d offset);
 };
 
 int edgeSideSS(Point2d& origin, Point2d& reference, Point2d& test);

@@ -21,6 +21,7 @@ void CPURenderer::Clear(uint32_t color)
 
 void CPURenderer::SetPixel(int x, int y, uint32_t color)  //translate to 1D array co-ords
 {
+	y = 1080 - y;
 	if (x >= 0 && x < width && y >= 0 && y < height)
 		pixelBuffer[y * width + x] = color;
 }
@@ -38,7 +39,7 @@ void CPURenderer::drawMesh(Mesh& mesh)
 }
 void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 {
-	cout << "drawing tri:" << v1 << v2 << v3;
+	cout << "drawing tri:" << v1.position << v2.position << v3.position;
 	Point2d p1(v1);
 	Point2d p2(v2);
 	Point2d p3(v3);
