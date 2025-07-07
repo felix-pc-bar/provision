@@ -9,9 +9,9 @@ Vertex3d::Vertex3d(Position3d pos)
 	cout << "New vert created" << endl;
 }
 
-Position3d operator+(Position3d& p1, Position3d& p2) { return Position3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
-Position3d operator-(Position3d& p1, Position3d& p2) { return Position3d(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z); }
-Position3d operator*(Position3d& p1, Position3d& p2) { return Position3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
+Position3d operator+(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
+Position3d operator-(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z); }
+Position3d operator*(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
 
 void Vertex3d::offsetPosition(Position3d offset) 
 {
@@ -37,9 +37,6 @@ ostream& operator<< (ostream& os, Position3d pos)
 
 
 Mesh::Mesh() { // Temp constructor code creates single preset tri
-	//vertices.emplace_back(Position3d{ 0.0f, 1.0f, 0.5f });   // top
-	//vertices.emplace_back(Position3d{ -0.5f, 1.0f, -0.5f }); // bottom left
-	//vertices.emplace_back(Position3d{ 0.5f, 1.0f, -0.5f });  // bottom right
 	this->addVertex(Position3d{ 0.0f, 1.0f, 0.5f });
 	this->addVertex(Position3d{ -0.5f, 1.0f, -0.5f });
 	this->addVertex(Position3d{ 0.5f, 1.0f, -0.5f });
@@ -54,5 +51,8 @@ void Mesh::addVertex(Position3d pos)
 
 void Mesh::move(Position3d offset)
 {
-	
+	for (Vertex3d& vert : this->vertices)
+	{
+		vert.offsetPosition(offset);
+	}
 }

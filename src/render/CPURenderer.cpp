@@ -39,7 +39,7 @@ void CPURenderer::drawMesh(Mesh& mesh)
 }
 void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 {
-	cout << "drawing tri:" << v1.position << v2.position << v3.position;
+	cout << "drawing tri:" << v1.position << v2.position << v3.position << endl;
 	Point2d p1(v1);
 	Point2d p2(v2);
 	Point2d p3(v3);

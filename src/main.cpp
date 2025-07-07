@@ -36,8 +36,14 @@ int main(int argc, char** args) {
 	CPURenderer vp(mainRenderer, 1920, 1080);
 	
 	Mesh triangleMesh;
-	vp.drawMesh(triangleMesh);
-	vp.Present();
+	
+	while (true)
+	{
+		vp.drawMesh(triangleMesh);
+		vp.Present();
+		triangleMesh.move(Position3d{ 0.1f,0.0f,0.0f });
+		vp.Clear(0xFF000000);
+	}
 
 	system("pause");
 
