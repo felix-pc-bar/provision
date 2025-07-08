@@ -16,7 +16,7 @@ add_executable(barbershop
  "src/engTools.cpp" 
  "src/engTools.h" 
  "src/logic2d.cpp" 
- "src/logic2d.h" "src/engconfig.h" "src/engconfig.cpp")
+ "src/logic2d.h" "src/engconfig.h" "src/engconfig.cpp" "src/import3d.cpp" "src/import3d.h")
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(barbershop PROPERTIES
     LINK_FLAGS "/SUBSYSTEM:CONSOLE"

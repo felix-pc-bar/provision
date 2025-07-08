@@ -43,10 +43,11 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 	Point2d p1(v1);
 	Point2d p2(v2);
 	Point2d p3(v3);
+	Rect2d bb(v1, v2, v3);
 	bool valid1, valid2, valid3 = false; //Here we store the side of the point from each edge vector; false for negative edgeSideSS() return, and true for positive.
-	for (int y = 0; y < 1080; y++)
+	for (int y = bb.min.y; y < bb.max.y; y++)
 	{
-		for (int x = 0; x < 1920; x++)
+		for (int x = bb.min.x; x < bb.max.x; x++)
 		{
 			valid1 = (edgeSideSS(p1, p2, Point2d{ x,y }) > 0) ? true : false;
 			valid2 = (edgeSideSS(p2, p3, Point2d{ x,y }) > 0) ? true : false;

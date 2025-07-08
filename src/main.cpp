@@ -41,7 +41,7 @@ int main(int argc, char** args) {
 	{
 		vp.drawMesh(triangleMesh);
 		vp.Present();
-		triangleMesh.move(Position3d{ 0.1f,0.0f,0.0f });
+		triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
 		vp.Clear(0xFF000000);
 	}
 
