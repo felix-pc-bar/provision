@@ -1,8 +1,5 @@
 #pragma once
 #include <SDL.h>
-#include <vector>
-#include <cstdint>
-//#include "../engTools.h" //Nasty
 #include "../logic2d.h"
 
 class CPURenderer {

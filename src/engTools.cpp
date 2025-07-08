@@ -24,12 +24,14 @@ Position3d::Position3d() //if not passed a position, we just put it at origin
 	this->y = 0;
 	this->z = 0;
 }
+
 Position3d::Position3d(double xPos, double yPos, double zPos)
 {
 	this->x = xPos;
 	this->y = yPos;
 	this->z = zPos;
 }
+
 ostream& operator<< (ostream& os, Position3d pos)
 {
 	return os << "[" << pos.x << " " << pos.y << " " << pos.z << "]";
@@ -62,3 +64,9 @@ void Mesh::move(Position3d offset)
 		vert.offsetPosition(offset);
 	}
 }
+
+Rotation3d::Rotation3d() { x = 0; y = 0; z = 0; }
+
+Vector3d::Vector3d() { }
+
+Camera* currentCam = nullptr;

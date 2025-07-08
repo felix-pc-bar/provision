@@ -13,7 +13,34 @@ public:
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
 	friend ostream& operator<< (ostream& os, Position3d pos);
+	friend Position3d operator+(const Position3d& p1, const Position3d& p2);
+	friend Position3d operator-(const Position3d& p1, const Position3d& p2);
+	friend Position3d operator*(const Position3d& p1, const Position3d& p2);
 };
+
+class Rotation3d
+{
+public:
+	float x, y, z;
+	Rotation3d();
+};
+
+class Vector3d // 3D position & euclidian angle
+{
+public:
+	Position3d position;
+	Rotation3d rotation;
+	Vector3d();
+
+};
+
+class Camera
+{
+public:
+	Vector3d vec;
+};
+
+extern Camera* currentCam;
 
 class Vertex3d
 {
@@ -22,6 +49,7 @@ public:
 	Position3d position; 
 	void offsetPosition(Position3d offset);
 };
+
 class Mesh
 {
 public:

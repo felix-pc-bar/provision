@@ -35,12 +35,20 @@ int main(int argc, char** args) {
 	SDL_SetWindowTitle(window, "Barbershop");
 	
 	CPURenderer vp(mainRenderer, 1920, 1080);	
+	Camera mainCam;
+	currentCam = &mainCam;
 	Mesh triangleMesh;
 	Mesh cube = importObj("content/obj/cube.obj");
+	const Uint8* gk; 
 	
 	while (true)
 	{
-		//vp.drawMesh(triangleMesh);
+		// Handle inputs
+		gk = SDL_GetKeyboardState(NULL); 
+		if (gk[SDL_SCANCODE_W]) { mainCam.vec.position.y -= 0.05f; }
+		if (gk[SDL_SCANCODE_W]) { mainCam.vec.position.y += 0.01f; cout << "s"; }
+		if (gk[SDL_SCANCODE_A]) { mainCam.vec.position.x -= 0.05f; }
+		if (gk[SDL_SCANCODE_D]) { mainCam.vec.position.x += 0.05f; }
 		vp.drawMesh(cube);
 		vp.Present();
 		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "logic2d.h"
+#include "engconfig.h"
 
 using std::vector, std::cout, std::endl;
 
@@ -9,9 +10,14 @@ Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
 Point2d::Point2d(Vertex3d from3d) // Convert a 3d space vert to screen space point (important!)
 {
-	float perspscale = perspectiveFac * from3d.position.y;
-	this->x = from3d.position.x / perspscale;
-	this->y = from3d.position.z / perspscale;
+	Position3d ss;
+	if (currentCam != nullptr)
+	{
+		ss = from3d.position - currentCam->vec.position;
+	}
+	float perspscale = perspectiveFac * (ss.y + 2); // Temporarily add offset to avoid clipping
+	this->x = ss.x / perspscale;
+	this->y = ss.z / perspscale;
 	this->x += 960;
 	this->y += 540;
 }
@@ -33,10 +39,10 @@ int edgeSideSS(const Point2d& origin, const Point2d& reference, const Point2d& t
 
 Rect2d::Rect2d(int lX, int lY, int hX, int hY) : min(lX, lY), max(hX, hY) {}
 
-Rect2d::Rect2d(Point2d v1, Point2d v2, Point2d v3)
+Rect2d::Rect2d(Point2d v1, Point2d v2, Point2d v3) // Bounding box of 3 points
 {
-	this->min.x = std::min(v1.x, std::min(v2.x, v3.x));
-	this->min.y = std::min(v1.y, std::min(v2.y, v3.y));
-	this->max.x = std::max(v1.x, std::max(v2.x, v3.x));
-	this->max.y = std::max(v1.y, std::max(v2.y, v3.y));
+	this->min.x = std::max(std::min(v1.x, std::min(v2.x, v3.x )), 0);
+	this->min.y = std::max(std::min(v1.y, std::min(v2.y, v3.y )), 0);
+	this->max.x = std::min(std::max(v1.x, std::max(v2.x, v3.x )),1080);
+	this->max.y = std::min(std::max(v1.y, std::max(v2.y, v3.y )),1080);
 }

@@ -6,7 +6,8 @@ Mesh importObj(string filename)
 {
 	string line;
 	string inxStr;
-	ifstream objfile("F:/Creative raw/repos/barbershop/content/obj/cube.obj");
+	//ifstream objfile("F:/Creative raw/repos/barbershop/content/obj/cube.obj");
+	ifstream objfile("F:/Creative raw/repos/barbershop/content/obj/xz.obj");
 	Mesh result;
 	if (objfile.is_open())
 	{

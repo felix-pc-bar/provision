@@ -1,6 +1,5 @@
 #pragma once
 #include "engTools.h"
-#include "engconfig.h"
 
 class Point2d
 {
