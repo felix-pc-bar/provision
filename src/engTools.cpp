@@ -36,17 +36,23 @@ ostream& operator<< (ostream& os, Position3d pos)
 }
 
 
-Mesh::Mesh() { // Temp constructor code creates single preset tri
-	this->addVertex(Position3d{ 0.0f, 1.0f, 0.5f });
-	this->addVertex(Position3d{ -0.5f, 1.0f, -0.5f });
-	this->addVertex(Position3d{ 0.5f, 1.0f, -0.5f });
+Mesh::Mesh() { 
+	//this->addVertex(Position3d{ 0.0f, 1.0f, 0.5f });
+	//this->addVertex(Position3d{ -0.5f, 1.0f, -0.5f });
+	//this->addVertex(Position3d{ 0.5f, 1.0f, -0.5f });
 
-	indices = { 0, 1, 2 };
+	//indices = { 0, 1, 2 };
 }
 
 void Mesh::addVertex(Position3d pos)
 {
 	vertices.emplace_back(Vertex3d{pos});
+}
+
+
+void Mesh::addFace(vector<int>& ind)
+{
+	this->indices.insert(this->indices.end(), ind.begin(), ind.end());
 }
 
 void Mesh::move(Position3d offset)

@@ -29,6 +29,7 @@ public:
 	vector<Vertex3d> vertices; //vector of type Vertex
 	vector<int> indices; //stores tri indices as 3-tuple
 	void addVertex(Position3d pos);
+	void addFace(vector<int> &ind);
 	void move(Position3d offset);
 };
 

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include "render/CPURenderer.h"
+#include "import3d.h"
 
 using std::endl, std::cout;
 
@@ -33,15 +34,16 @@ int main(int argc, char** args) {
 	}
 	SDL_SetWindowTitle(window, "Barbershop");
 	
-	CPURenderer vp(mainRenderer, 1920, 1080);
-	
+	CPURenderer vp(mainRenderer, 1920, 1080);	
 	Mesh triangleMesh;
+	Mesh cube = importObj("content/obj/cube.obj");
 	
 	while (true)
 	{
-		vp.drawMesh(triangleMesh);
+		//vp.drawMesh(triangleMesh);
+		vp.drawMesh(cube);
 		vp.Present();
-		triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
+		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
 		vp.Clear(0xFF000000);
 	}
 

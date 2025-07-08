@@ -5,7 +5,8 @@
 *.slo
 *.lo
 *.o
-*.obj
+#*.obj
+# compile object vs 3d object :/
 
 # extra
 /build/
