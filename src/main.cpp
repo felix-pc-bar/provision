@@ -40,15 +40,21 @@ int main(int argc, char** args) {
 	Mesh triangleMesh;
 	Mesh cube = importObj("content/obj/cube.obj");
 	const Uint8* gk; 
+	SDL_Event event;
 	
 	while (true)
 	{
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				return 0;  // or set a `running` flag to false
+			}
+		}
 		// Handle inputs
 		gk = SDL_GetKeyboardState(NULL); 
-		if (gk[SDL_SCANCODE_W]) { mainCam.vec.position.y -= 0.05f; }
-		if (gk[SDL_SCANCODE_W]) { mainCam.vec.position.y += 0.01f; cout << "s"; }
-		if (gk[SDL_SCANCODE_A]) { mainCam.vec.position.x -= 0.05f; }
-		if (gk[SDL_SCANCODE_D]) { mainCam.vec.position.x += 0.05f; }
+		if (gk[SDL_SCANCODE_W]) { mainCam.vec.position.y += 0.01f; }
+		if (gk[SDL_SCANCODE_S]) { mainCam.vec.position.y -= 0.01f; }
+		if (gk[SDL_SCANCODE_A]) { mainCam.vec.position.x -= 0.01f; }
+		if (gk[SDL_SCANCODE_D]) { mainCam.vec.position.x += 0.01f; }
 		vp.drawMesh(cube);
 		vp.Present();
 		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
