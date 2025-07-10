@@ -1,4 +1,5 @@
 #include "engTools.h"
+#include <cmath>
 
 using std::vector, std::cout, std::endl;
 
@@ -6,7 +7,6 @@ using std::vector, std::cout, std::endl;
 Vertex3d::Vertex3d(Position3d pos)
 {
 	this->position = pos;
-	cout << "New vert created" << endl;
 }
 
 Position3d operator+(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
@@ -30,6 +30,30 @@ Position3d::Position3d(double xPos, double yPos, double zPos)
 	this->x = xPos;
 	this->y = yPos;
 	this->z = zPos;
+}
+
+
+Position3d Position3d::cross(const Position3d& operand)
+{
+	return Position3d(
+		y * operand.z - z * operand.y,
+		z * operand.x - x * operand.z,
+		x * operand.y - y * operand.x
+	);
+}
+float Position3d::dot(const Position3d& operand)
+{
+	return x * operand.x * y * operand.y + z * operand.z;
+}
+void Position3d::normalise()
+{
+	float magnitude = std::sqrt(x * x + y * y + z * z); // find magnitude by pythaagoras
+	if (magnitude > 0.0f)
+	{
+		x /= magnitude;
+		y /= magnitude;
+		z /= magnitude;
+	}
 }
 
 ostream& operator<< (ostream& os, Position3d pos)

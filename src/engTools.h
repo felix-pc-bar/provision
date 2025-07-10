@@ -6,12 +6,17 @@
 
 using std::vector, std::ostream;
 
-class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert)
+class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
 {
 public:
 	double x, y, z;
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
+
+	Position3d cross(const Position3d& operand);
+	float dot(const Position3d& operand);
+	void normalise();
+
 	friend ostream& operator<< (ostream& os, Position3d pos);
 	friend Position3d operator+(const Position3d& p1, const Position3d& p2);
 	friend Position3d operator-(const Position3d& p1, const Position3d& p2);
@@ -25,7 +30,7 @@ public:
 	Rotation3d();
 };
 
-class Vector3d // 3D position & euclidian angle
+class Vector3d // Seems like a stupid class icl
 {
 public:
 	Position3d position;
@@ -37,7 +42,9 @@ public:
 class Camera
 {
 public:
-	Vector3d vec;
+	//Vector3d vec;
+	Position3d pos;
+	Rotation3d rot;
 };
 
 extern Camera* currentCam;

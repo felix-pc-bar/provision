@@ -2,12 +2,12 @@
 
 using namespace std;
 
-Mesh importObj(string filename)
+Mesh importObj(string filename) // Objects should be exported as Forward = +Y, Up = +Z
 {
 	string line;
 	string inxStr;
 	//ifstream objfile("F:/Creative raw/repos/barbershop/content/obj/cube.obj");
-	ifstream objfile("F:/Creative raw/repos/barbershop/content/obj/xz.obj");
+	ifstream objfile(filename);
 	Mesh result;
 	if (objfile.is_open())
 	{
@@ -39,6 +39,7 @@ Mesh importObj(string filename)
 
 			}
 		}
+		std::cout << "Imported " << filename << " - " << result.vertices.size() << " vertices" << std::endl;
 		return result;
 	}
 	std::cout << "Import error" << endl;;
