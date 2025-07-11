@@ -69,7 +69,7 @@ void CPURenderer::drawScene(Scene& scene)
 		}
 	}
 
-	// Sort farthest first
+	// Depth occlusion is dodgy (I'm ignoring it)
 	std::sort(triangles.begin(), triangles.end(),
 		[](const TriangleToRender& a, const TriangleToRender& b) {
 			return a.distanceToCamera > b.distanceToCamera;

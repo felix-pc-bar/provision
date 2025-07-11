@@ -60,7 +60,9 @@ void Position3d::normalise()
 }
 
 
-float Position3d::lengthSquared() const { return this->dot(*this); }
+//float Position3d::lengthSquared() const { return this->dot(*this); }
+float Position3d::lengthSquared() const {
+	return x * x + y * y + z * z; }
 
 ostream& operator<< (ostream& os, Position3d pos)
 {
