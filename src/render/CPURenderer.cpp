@@ -1,5 +1,6 @@
 #include "CPURenderer.h"
 #include "../engconfig.h"
+#include "../engTools.h"
 #include <iostream>
 #include <vector>
 #include <cstdint>
@@ -31,11 +32,11 @@ void CPURenderer::Clear(uint32_t color)
 	std::fill(pixelBuffer.begin(), pixelBuffer.end(), color);
 }
 
-void CPURenderer::SetPixel(int x, int y, uint32_t color)  //translate to 1D array co-ords
+inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 {
-	y = 1080 - y;
-	if (x >= 0 && x < width && y >= 0 && y < height)
-		pixelBuffer[y * width + x] = color;
+	int screenY = screenheight - y;
+	if ((unsigned)x < (unsigned)width && (unsigned)screenY < (unsigned)height)
+		pixelBuffer[screenY * width + x] = color;
 }
 
 void CPURenderer::drawMesh(Mesh& mesh) 
@@ -84,6 +85,13 @@ void CPURenderer::drawScene(Scene& scene)
 
 void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 {
+	Point2d p1(v1);
+	Point2d p2(v2);
+	Point2d p3(v3);
+
+	if (v1.position.cameraspace().y <=0 && v2.position.cameraspace().y <=0 && v3.position.cameraspace().y <=0 ) 
+		return;
+
 	// Calculate Triangle colour; here we have O(n)=1 but for pixel shaders we have O(n)=n :/
 	// 3D positions of triangle corners
 	Position3d& loc1 = v1.position;
@@ -110,9 +118,9 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 	// Weird way of doing ARGB, but it works i guess
 	uint32_t colour = (0xFF << 24) | (intensity << 16) | (intensity << 8) | intensity;
 
-	Point2d p1(v1);
-	Point2d p2(v2);
-	Point2d p3(v3);
+	if (!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight))
+		return;
+
 	Rect2d bb(v1, v2, v3);
 
 	// Compute edge function coefficients (A, B, C) for each edge: Ax + By + C = 0
