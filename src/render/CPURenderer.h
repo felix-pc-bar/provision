@@ -20,3 +20,12 @@ private:
 	int height;
 	void SetPixel(int x, int y, uint32_t color);
 };
+
+struct TriangleToRender 
+{
+	Vertex3d v1, v2, v3;
+	float distanceToCamera;
+
+	TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos);
+};
+

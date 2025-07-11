@@ -40,7 +40,7 @@ int main(int argc, char** args) {
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	currentScene = &mainScene; // Set the current scene to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
-	Mesh testmesh = importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj");
+	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj"));
 	const Uint8* gk; 
 	SDL_Event event;
 	
@@ -57,7 +57,8 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos.y -= 0.05f; }
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= 0.05f; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += 0.05f; }
-		vp.drawMesh(testmesh);
+		//vp.drawMesh(testmesh);
+		vp.drawScene(*currentScene);
 		vp.Present();
 		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
 		vp.Clear(0xFF000000);

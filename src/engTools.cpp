@@ -35,7 +35,7 @@ Position3d::Position3d(double xPos, double yPos, double zPos)
 }
 
 
-Position3d Position3d::cross(const Position3d& operand)
+Position3d Position3d::cross(const Position3d& operand) const
 {
 	return Position3d(
 		y * operand.z - z * operand.y,
@@ -43,10 +43,11 @@ Position3d Position3d::cross(const Position3d& operand)
 		x * operand.y - y * operand.x
 	);
 }
-float Position3d::dot(const Position3d& operand)
+float Position3d::dot(const Position3d& operand) const
 {
 	return x * operand.x * y * operand.y + z * operand.z;
 }
+
 void Position3d::normalise()
 {
 	float magnitude = std::sqrt(x * x + y * y + z * z); // find magnitude by pythaagoras
@@ -57,6 +58,9 @@ void Position3d::normalise()
 		z /= magnitude;
 	}
 }
+
+
+float Position3d::lengthSquared() const { return this->dot(*this); }
 
 ostream& operator<< (ostream& os, Position3d pos)
 {

@@ -13,9 +13,10 @@ public:
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
 
-	Position3d cross(const Position3d& operand);
-	float dot(const Position3d& operand);
+	Position3d cross(const Position3d& operand) const;
+	float dot(const Position3d& operand) const;
 	void normalise();
+	float lengthSquared() const;
 
 	friend ostream& operator<< (ostream& os, Position3d pos);
 	friend Position3d operator+(const Position3d& p1, const Position3d& p2);

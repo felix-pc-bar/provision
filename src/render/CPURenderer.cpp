@@ -3,8 +3,17 @@
 #include <iostream>
 #include <vector>
 #include <cstdint>
+#include <algorithm>
 
 using std::endl, std::cout;
+
+TriangleToRender::TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos) : v1(a), v2(b), v3(c)
+	{
+		Position3d center = (a.position + b.position + c.position) / 3.0f;
+		Position3d diff = center - camPos;
+		distanceToCamera = diff.lengthSquared(); // faster than .length()
+	}
+
 
 CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h) //Member initialiser list; constructer sets ob vars 
 {
@@ -41,9 +50,36 @@ void CPURenderer::drawMesh(Mesh& mesh)
 	}
 }
 
-void CPURenderer::drawScene(Scene& scene) 
+void CPURenderer::drawScene(Scene& scene)
 {
+	std::vector<TriangleToRender> triangles;
 
+	if (!scene.currentCam) return;
+	Position3d camPos = scene.currentCam->pos;
+
+	for (Mesh& mesh : scene.meshes)
+	{
+		for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
+		{
+			Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
+			Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
+			Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
+
+			triangles.emplace_back(v1, v2, v3, camPos);
+		}
+	}
+
+	// Sort farthest first
+	std::sort(triangles.begin(), triangles.end(),
+		[](const TriangleToRender& a, const TriangleToRender& b) {
+			return a.distanceToCamera > b.distanceToCamera;
+		});
+
+	// Draw
+	for (TriangleToRender& tri : triangles)
+	{
+		drawTri(tri.v1, tri.v2, tri.v3);
+	}
 }
 
 void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
