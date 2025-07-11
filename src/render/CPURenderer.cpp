@@ -40,6 +40,12 @@ void CPURenderer::drawMesh(Mesh& mesh)
 		drawTri(v1, v2, v3);
 	}
 }
+
+void CPURenderer::drawScene(Scene& scene) 
+{
+
+}
+
 void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 {
 	// Calculate Triangle colour; here we have O(n)=1 but for pixel shaders we have O(n)=n :/
@@ -53,7 +59,13 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 
 	Position3d normal = edge1vec.cross(edge2vec); // Find normal by cross product of 2 edge vectors
 	normal.normalise(); // lol
-
+	
+	// Test for backface
+	Position3d triCentre = (v1.position + v2.position + v3.position) / 3.0f;
+	Position3d viewDir = (currentScene->currentCam->pos - triCentre);
+	viewDir.normalise();
+	//if (normal.dot(viewDir) <= 0.0f) return;
+	
 	float dot = normal.dot(lightNormal);
 
 	// Valve diffuse shading: map dot to intesity 0.5->1 (i luv gaben)

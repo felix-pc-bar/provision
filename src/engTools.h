@@ -21,6 +21,7 @@ public:
 	friend Position3d operator+(const Position3d& p1, const Position3d& p2);
 	friend Position3d operator-(const Position3d& p1, const Position3d& p2);
 	friend Position3d operator*(const Position3d& p1, const Position3d& p2);
+	friend Position3d operator/(const Position3d& p1, const float div);
 };
 
 class Rotation3d
@@ -47,8 +48,6 @@ public:
 	Rotation3d rot;
 };
 
-extern Camera* currentCam;
-
 class Vertex3d
 {
 public:
@@ -67,4 +66,15 @@ public:
 	void addFace(vector<int> &ind);
 	void move(Position3d offset);
 };
+
+
+class Scene
+{
+public:
+	Camera* currentCam;
+	vector<Mesh> meshes;
+	vector<Camera> cams;
+};
+
+extern Scene* currentScene;
 

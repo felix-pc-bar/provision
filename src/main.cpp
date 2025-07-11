@@ -34,11 +34,13 @@ int main(int argc, char** args) {
 	}
 	SDL_SetWindowTitle(window, "Barbershop");
 	
-	CPURenderer vp(mainRenderer, 1920, 1080);	
-	Camera mainCam;
-	currentCam = &mainCam;
-	Mesh triangleMesh;
-	Mesh cube = importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj");
+	// Init
+	CPURenderer vp(mainRenderer, 1920, 1080); // Create viewport
+	Scene mainScene; //Create main scene
+	mainScene.cams.emplace_back(); // Add a camera to mainScene
+	currentScene = &mainScene; // Set the current scene to mainScene
+	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
+	Mesh testmesh = importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj");
 	const Uint8* gk; 
 	SDL_Event event;
 	
@@ -51,11 +53,11 @@ int main(int argc, char** args) {
 		}
 		// Handle inputs
 		gk = SDL_GetKeyboardState(NULL); 
-		if (gk[SDL_SCANCODE_W]) { mainCam.pos.y += 0.05f; }
-		if (gk[SDL_SCANCODE_S]) { mainCam.pos.y -= 0.05f; }
-		if (gk[SDL_SCANCODE_A]) { mainCam.pos.x -= 0.05f; }
-		if (gk[SDL_SCANCODE_D]) { mainCam.pos.x += 0.05f; }
-		vp.drawMesh(cube);
+		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos.y += 0.05f; }
+		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos.y -= 0.05f; }
+		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= 0.05f; }
+		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += 0.05f; }
+		vp.drawMesh(testmesh);
 		vp.Present();
 		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
 		vp.Clear(0xFF000000);

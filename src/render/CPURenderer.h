@@ -9,7 +9,8 @@ public:
 
 	void Clear(uint32_t color);
 	void Present(); // push pixels to texture and draw to screen
-	void drawMesh(Mesh& mesh);
+	void drawMesh(Mesh& mesh); // Old; maybe use for UI draw in future
+	void drawScene(Scene& scene);
 	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3); // Draw a triangle in screen space
 private:
 	SDL_Renderer* sdlRenderer;

@@ -11,9 +11,9 @@ Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 Point2d::Point2d(Vertex3d from3d) // Convert a 3d space vert to screen space point (important!)
 {
 	Position3d ss;
-	if (currentCam != nullptr)
+	if (currentScene->currentCam != nullptr)
 	{
-		ss = from3d.position - currentCam->pos;
+		ss = from3d.position - currentScene->currentCam->pos;
 	}
 	float perspscale = perspectiveFac * (ss.y + 2); // Temporarily add offset to avoid clipping
 	this->x = ss.x / perspscale;
