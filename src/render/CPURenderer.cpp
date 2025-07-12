@@ -60,12 +60,19 @@ void CPURenderer::drawScene(Scene& scene)
 
 	for (Mesh& mesh : scene.meshes)
 	{
+		Position3d pos = mesh.position;
+		Rotation3d rot = mesh.rotation;
 		for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
 		{
 			Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
 			Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
 			Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
-
+			//v1.offsetPosition(pos);
+			//v2.offsetPosition(pos);
+			//v3.offsetPosition(pos);
+			//v1.rotatePosition(rot, pos);
+			//v2.rotatePosition(rot, pos);
+			//v3.rotatePosition(rot, pos);
 			triangles.emplace_back(v1, v2, v3, camPos);
 		}
 	}

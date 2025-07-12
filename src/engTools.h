@@ -6,16 +6,17 @@
 
 using std::vector, std::ostream;
 
+class Rotation3d;
+
 class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
 {
 private:
-	void rotdot(float* matrix);
 public:
 	double x, y, z;
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
 	Position3d cameraspace();
-	void rotate(Rotation3d rot, Position3d pivot); // Rotate position around specified pivot
+	void rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot);
 
 	// Vector stuff
 	Position3d cross(const Position3d& operand) const;
@@ -30,6 +31,8 @@ public:
 	friend Position3d operator*(const Position3d& p1, const Position3d& p2);
 	friend Position3d operator/(const Position3d& p1, const float div);
 
+	Position3d& operator+=(const Position3d& other);
+
 	friend bool operator==(const Position3d& p1, const Position3d& p2);
 };
 
@@ -39,6 +42,10 @@ public:
 	float x, y, z;
 	Rotation3d();
 	Rotation3d(float x_, float y_, float z_);
+	friend Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2);
+	friend Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2);
+	friend Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2);
+	Rotation3d& operator+=(const Rotation3d& other);
 };
 
 class Camera
@@ -54,6 +61,7 @@ public:
 	Vertex3d(Position3d pos);
 	Position3d position; 
 	void offsetPosition(Position3d offset);
+	void rotatePosition(const Rotation3d& rot, const Position3d& pivot);
 };
 
 class Mesh
@@ -64,8 +72,19 @@ public:
 	vector<int> indices; //stores tri indices as 3-tuple
 	void addVertex(Position3d pos);
 	void addFace(vector<int> &ind);
-	void move(Position3d offset);
-	void rotate(Rotation3d offset, Position3d pivot);
+
+	void move(Position3d offset); 
+	void setPos(Position3d pos);
+
+	void rotate(const Rotation3d& rot, const Position3d& pivot); 
+	void setRotation(const Rotation3d& rot, const Position3d& pivot);
+	// pivoting by object origin (assumed)
+	void rotate(const Rotation3d& rot); 
+	void setRotation(const Rotation3d& rot); 
+
+	Position3d position;
+	Rotation3d rotation;
+
 };
 
 

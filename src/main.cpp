@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <cstdint>
 #include <vector>
+#include <cmath>
 #include "render/CPURenderer.h"
 #include "import3d.h"
 #include "engconfig.h"
@@ -42,18 +43,19 @@ int main(int argc, char** args) {
 	currentScene = &mainScene; // Set the current scene to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 	//mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/ico2.obj"));
-	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/cube.obj"));
+	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/sz2.obj"));
 	//mainScene.meshes[1].move({ 0.5, 2, 0 });
 	const Uint8* gk; 
 	SDL_Event event;
 	float freecamspeed;
 	mainScene.cams[0].pos.y -= 2;
+	int frame = 0;
 
 	while (true)
 	{
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
-				return 0;  // or set a `running` flag to false
+				return 0;  
 			}
 		}
 		// Handle inputs
@@ -68,8 +70,12 @@ int main(int argc, char** args) {
 		//vp.drawMesh(testmesh);
 		vp.drawScene(*currentScene);
 		vp.Present();
+		frame++;
 		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
 		vp.Clear(0xFF000000);
+		mainScene.meshes[0].rotate({ 0.0f, 0.0f, 0.1f });
+		//cout << frame / 10 << endl;
+		mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
 	}
 
 	system("pause");

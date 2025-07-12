@@ -18,9 +18,21 @@ Position3d operator*(const Position3d& p1, const Position3d& p2) { return Positi
 Position3d operator/(const Position3d& p1, const float div) { return Position3d(p1.x / div, p1.y / div, p1.z / div); }
 bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.y == p2.y && p1.z == p2.z) ? true : false; }
 
+Position3d& Position3d::operator+=(const Position3d& other) {
+	x += other.x;
+	y += other.y;
+	z += other.z;
+	return *this;
+}
+
 void Vertex3d::offsetPosition(Position3d offset) 
 {
 	this->position = this->position + offset;
+}
+
+void Vertex3d::rotatePosition(const Rotation3d& rot, const Position3d& pivot)
+{
+	this->position.rotateAroundPoint(rot, pivot);
 }
 
 Position3d::Position3d() //if not passed a position, we just put it at origin
@@ -37,36 +49,38 @@ Position3d::Position3d(double xPos, double yPos, double zPos)
 	this->z = zPos;
 }
 
-void Position3d::rotdot(float matrix[])
+// just the rotation matrices hardcoded (it's not like we're gonna want skew later on, right?)
+void Position3d::rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot)
 {
-	for (int i = 0; i < 3; i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			matrix[(i * 3) + j] *= (i == 0) ? this->x : ((i == 1) ? this->y : this->z); // Weird ternary stack, but just to turn 0-1-2 into x-y-z
-			cout << matrix[i];
-		}
-		(i == 0) ? this->x : ((i == 1) ? this->y : this->z) = matrix[i] + matrix[i+1] + matrix[i+2]; 
-		// This function stinks. (wrote when hungy)
-	}
-	return;
+	// Translate to origin relative to pivot
+	float x = this->x - pivot.x;
+	float y = this->y - pivot.y;
+	float z = this->z - pivot.z;
+
+	// Rotate around Z
+	float cosZ = cos(rotation.z);
+	float sinZ = sin(rotation.z);
+	float x1 = cosZ * x - sinZ * y;
+	float y1 = sinZ * x + cosZ * y;
+
+	// Rotate around Y
+	float cosY = cos(rotation.y);
+	float sinY = sin(rotation.y);
+	float x2 = cosY * x1 + sinY * z;
+	float z1 = -sinY * x1 + cosY * z;
+
+	// Rotate around X
+	float cosX = cos(rotation.x);
+	float sinX = sin(rotation.x);
+	float y2 = cosX * y1 - sinX * z1;
+	float z2 = sinX * y1 + cosX * z1;
+
+	// Translate back from origin
+	this->x = x2 + pivot.x;
+	this->y = y2 + pivot.y;
+	this->z = z2 + pivot.z;
 }
 
-void Position3d::rotate(Rotation3d rot, Position3d pivot)
-{
-	if (*this == pivot) return; // If we are at the same position as the pivot, nothing will happen
-	if (rot.x != 0)
-	{
-		float xmatrix[9] = {1, 0, 0,
-							0, cos(x), -sin(x),
-							0, sin(x), cos(x)};
-		*this = *this - pivot;
-		this->rotdot(xmatrix);
-		*this = *this + pivot;
-	}
-	return;
-
-}
 
 Position3d Position3d::cross(const Position3d& operand) const
 {
@@ -137,14 +151,54 @@ void Mesh::move(Position3d offset)
 	{
 		vert.offsetPosition(offset);
 	}
+	this->position += offset;
 }
 
-void Mesh::rotate(Rotation3d offset, Position3d pivot)
+void Mesh::setPos(Position3d pos)
+{
+	Position3d offset = pos - this->position; // find the offset that will change the current pos to the new one
+	this->move(offset);
+}
+
+Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
+Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z); }
+Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
+
+Rotation3d& Rotation3d::operator+=(const Rotation3d& other) {
+	x += other.x;
+	y += other.y;
+	z += other.z;
+	return *this;
+}
+
+void Mesh::rotate(const Rotation3d& rot, const Position3d& pivot)
 {
 	for (Vertex3d& vert : this->vertices)
 	{
-		vert.position.rotate(offset, pivot);
+		vert.rotatePosition(rot, pivot);
 	}
+	this->rotation += rot;
+}
+
+void Mesh::setRotation(const Rotation3d& rot, const Position3d& pivot)
+{
+	Rotation3d offset = rot - this->rotation; // find the offset that will change the current pos to the new one
+	this->rotate(offset);
+}
+
+void Mesh::rotate(const Rotation3d& rot)
+{
+	for (Vertex3d& vert : this->vertices)
+	{
+		vert.rotatePosition(rot, this->position);
+	}
+	this->rotation += rot;
+}
+
+void Mesh::setRotation(const Rotation3d& rot)
+{
+	Rotation3d offset = rot - this->rotation; // find the offset that will change the current pos to the new one
+	this->rotate(offset);
 }
 
 Rotation3d::Rotation3d() { x = 0; y = 0; z = 0; }
