@@ -96,33 +96,25 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 	Point2d p2(v2);
 	Point2d p3(v3);
 
-	if (v1.position.cameraspace().y <=0 && v2.position.cameraspace().y <=0 && v3.position.cameraspace().y <=0 ) 
+	if (v1.position.cameraspace().y <= 0 && v2.position.cameraspace().y <= 0 && v3.position.cameraspace().y <= 0)
 		return;
 
-	// Calculate Triangle colour; here we have O(n)=1 but for pixel shaders we have O(n)=n :/
-	// 3D positions of triangle corners
 	Position3d& loc1 = v1.position;
 	Position3d& loc2 = v2.position;
 	Position3d& loc3 = v3.position;
 
 	Position3d edge1vec = loc2 - loc1;
 	Position3d edge2vec = loc3 - loc1;
+	Position3d normal = edge1vec.cross(edge2vec);
+	normal.normalise();
 
-	Position3d normal = edge1vec.cross(edge2vec); // Find normal by cross product of 2 edge vectors
-	normal.normalise(); // lol
-	
-	// Test for backface
 	Position3d triCentre = (v1.position + v2.position + v3.position) / 3.0f;
 	Position3d viewDir = (currentScene->currentCam->pos - triCentre);
 	viewDir.normalise();
-	//if (normal.dot(viewDir) <= 0.0f) return;
-	
-	float dot = normal.dot(lightNormal);
 
-	// Valve diffuse shading: map dot to intesity 0.5->1 (i luv gaben)
+	float dot = normal.dot(lightNormal);
 	float value = 0.25f * dot + 0.75f;
 	uint8_t intensity = static_cast<uint8_t>(value * 255);
-	// Weird way of doing ARGB, but it works i guess
 	uint32_t colour = (0xFF << 24) | (intensity << 16) | (intensity << 8) | intensity;
 
 	if (!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight))
@@ -130,46 +122,38 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 
 	Rect2d bb(v1, v2, v3);
 
-	// Compute edge function coefficients (A, B, C) for each edge: Ax + By + C = 0
-	int A12 = p1.y - p2.y;
-	int B12 = p2.x - p1.x;
-	int C12 = p1.x * p2.y - p2.x * p1.y;
+	int A12 = p1.y - p2.y, B12 = p2.x - p1.x, C12 = p1.x * p2.y - p2.x * p1.y;
+	int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
+	int A31 = p3.y - p1.y, B31 = p1.x - p3.x, C31 = p3.x * p1.y - p1.x * p3.y;
 
-	int A23 = p2.y - p3.y;
-	int B23 = p3.x - p2.x;
-	int C23 = p2.x * p3.y - p3.x * p2.y;
+	uint32_t* pixels = pixelBuffer.data();
 
-	int A31 = p3.y - p1.y;
-	int B31 = p1.x - p3.x;
-	int C31 = p3.x * p1.y - p1.x * p3.y;
-
-	// Loop over bounding box
 	for (int y = bb.min.y; y < bb.max.y; y++)
 	{
-		// Evaluate edge functions at start of row (x = bb.min.x, y = y)
+		int flippedY = screenheight - y;
+		if (flippedY < 0 || flippedY >= screenheight) continue;
+
+		int baseIndex = flippedY * width;
+
 		int w1 = A12 * bb.min.x + B12 * y + C12;
 		int w2 = A23 * bb.min.x + B23 * y + C23;
 		int w3 = A31 * bb.min.x + B31 * y + C31;
 
-		// These are the deltas for each edge as we increment x by 1
-		int dw1 = A12;
-		int dw2 = A23;
-		int dw3 = A31;
+		int dw1 = A12, dw2 = A23, dw3 = A31;
 
 		for (int x = bb.min.x; x < bb.max.x; x++)
 		{
-			// Check if point is inside triangle (all edge values >= 0)
-			if (w1 >= 0 && w2 >= 0 && w3 >= 0)
+			if ((unsigned)x < (unsigned)width && w1 >= 0 && w2 >= 0 && w3 >= 0)
 			{
-				SetPixel(x, y, colour);
+				pixels[baseIndex + x] = colour;
 			}
-
 			w1 += dw1;
 			w2 += dw2;
 			w3 += dw3;
 		}
 	}
 }
+
 void CPURenderer::Present()
 {
 	SDL_UpdateTexture(texture, nullptr, pixelBuffer.data(), width * sizeof(uint32_t));

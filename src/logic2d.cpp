@@ -8,30 +8,27 @@ Point2d::Point2d() { this->x = 0; this->y = 0; }
 
 Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
-Point2d::Point2d(Vertex3d from3d) // Convert a 3d space vert to screen space point (important!)
+Point2d::Point2d(const Vertex3d& from3d)
 {
-	Position3d ss;
-	if (currentScene->currentCam != nullptr)
-	{
-		ss = from3d.position - currentScene->currentCam->pos;
-	}
+	// Cache camera position locally to avoid repeated dereferencing
+	const Position3d& camPos = currentScene->currentCam->pos;
+
+	float dx = from3d.position.x - camPos.x;
+	float dy = from3d.position.y - camPos.y;
+	float dz = from3d.position.z - camPos.z;
+
+	// Compute perspective scale factor
 	float pf = perspectiveFac / screenheight;
+	float perspscale = pf * dy;
 
-	float perspscale = pf * (ss.y); // Temporarily add offset to avoid clipping
+	// Avoid division by zero or near-zero
+	if (perspscale <= 0.0001f) {
+		this->x = this->y = -99999;  // or sentinel value for culling
+		return;
+	}
 
-	//if (ss.y <= 0) 
-	//{
-	//	this->x = 0;
-	//	this->y = 0;
-	//	return;
-	//}
-
-	this->x = ss.x / perspscale;
-	this->y = ss.z / perspscale;
-	//this->x /= screenwidth;
-	//this->y /= screenheight * 1.777f; // to keep it square (at 16:9)
-	this->x += screenwidth/2;
-	this->y += screenheight/2;
+	this->x = dx / perspscale + screenwidth * 0.5f;
+	this->y = dz / perspscale + screenheight * 0.5f;
 }
 
 Point2d operator+(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x + p2.x, p1.y + p2.y); }
