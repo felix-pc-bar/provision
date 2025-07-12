@@ -42,11 +42,12 @@ int main(int argc, char** args) {
 	currentScene = &mainScene; // Set the current scene to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 	//mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/ico2.obj"));
-	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/sz2.obj"));
+	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/cube.obj"));
 	//mainScene.meshes[1].move({ 0.5, 2, 0 });
 	const Uint8* gk; 
 	SDL_Event event;
 	float freecamspeed;
+	mainScene.cams[0].pos.y -= 2;
 
 	while (true)
 	{
@@ -63,6 +64,7 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos.y -= freecamspeed; }
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += freecamspeed; }
+
 		//vp.drawMesh(testmesh);
 		vp.drawScene(*currentScene);
 		vp.Present();

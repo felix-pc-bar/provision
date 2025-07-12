@@ -1,7 +1,7 @@
 #include "engTools.h"
 #include <cmath>
 
-using std::vector, std::cout, std::endl;
+using std::vector, std::cout, std::endl, std::sin, std::cos;
 
 Scene* currentScene = nullptr;
 
@@ -37,6 +37,36 @@ Position3d::Position3d(double xPos, double yPos, double zPos)
 	this->z = zPos;
 }
 
+void Position3d::rotdot(float matrix[])
+{
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			matrix[(i * 3) + j] *= (i == 0) ? this->x : ((i == 1) ? this->y : this->z); // Weird ternary stack, but just to turn 0-1-2 into x-y-z
+			cout << matrix[i];
+		}
+		(i == 0) ? this->x : ((i == 1) ? this->y : this->z) = matrix[i] + matrix[i+1] + matrix[i+2]; 
+		// This function stinks. (wrote when hungy)
+	}
+	return;
+}
+
+void Position3d::rotate(Rotation3d rot, Position3d pivot)
+{
+	if (*this == pivot) return; // If we are at the same position as the pivot, nothing will happen
+	if (rot.x != 0)
+	{
+		float xmatrix[9] = {1, 0, 0,
+							0, cos(x), -sin(x),
+							0, sin(x), cos(x)};
+		*this = *this - pivot;
+		this->rotdot(xmatrix);
+		*this = *this + pivot;
+	}
+	return;
+
+}
 
 Position3d Position3d::cross(const Position3d& operand) const
 {
@@ -109,8 +139,21 @@ void Mesh::move(Position3d offset)
 	}
 }
 
+void Mesh::rotate(Rotation3d offset, Position3d pivot)
+{
+	for (Vertex3d& vert : this->vertices)
+	{
+		vert.position.rotate(offset, pivot);
+	}
+}
+
 Rotation3d::Rotation3d() { x = 0; y = 0; z = 0; }
 
-Vector3d::Vector3d() { }
+Rotation3d::Rotation3d(float x_, float y_, float z_)
+{
+	this->x = x_;
+	this->y = y_;
+	this->z = z_;
+}
 
 Camera* currentCam = nullptr;

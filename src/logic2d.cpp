@@ -15,7 +15,9 @@ Point2d::Point2d(Vertex3d from3d) // Convert a 3d space vert to screen space poi
 	{
 		ss = from3d.position - currentScene->currentCam->pos;
 	}
-	float perspscale = perspectiveFac * (ss.y); // Temporarily add offset to avoid clipping
+	float pf = perspectiveFac / screenheight;
+
+	float perspscale = pf * (ss.y); // Temporarily add offset to avoid clipping
 
 	//if (ss.y <= 0) 
 	//{
@@ -26,8 +28,8 @@ Point2d::Point2d(Vertex3d from3d) // Convert a 3d space vert to screen space poi
 
 	this->x = ss.x / perspscale;
 	this->y = ss.z / perspscale;
-	//this->x *= screenwidth;
-	//this->y *= screenheight;
+	//this->x /= screenwidth;
+	//this->y /= screenheight * 1.777f; // to keep it square (at 16:9)
 	this->x += screenwidth/2;
 	this->y += screenheight/2;
 }
