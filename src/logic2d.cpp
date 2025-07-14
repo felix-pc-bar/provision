@@ -10,25 +10,48 @@ Point2d::Point2d(int xin, int yin) : x(xin), y(yin) {}
 
 Point2d::Point2d(const Vertex3d& from3d)
 {
-	// Cache camera position locally to avoid repeated dereferencing
-	const Position3d& camPos = currentScene->currentCam->pos;
+    const Position3d& camPos = currentScene->currentCam->pos;
+    const Rotation3d& camRot = currentScene->currentCam->rot;
 
-	float dx = from3d.position.x - camPos.x;
-	float dy = from3d.position.y - camPos.y;
-	float dz = from3d.position.z - camPos.z;
+    // Translate world position to camera-relative coordinates
+    float dx = from3d.position.x - camPos.x;
+    float dy = from3d.position.y - camPos.y;
+    float dz = from3d.position.z - camPos.z;
 
-	// Compute perspective scale factor
-	float pf = perspectiveFac / screenheight;
-	float perspscale = pf * dy;
+    // Apply inverse camera rotation (i.e. rotate world opposite to camera)
+    float cosYaw = cos(-camRot.x);
+    float sinYaw = sin(-camRot.x);
+    float cosPitch = cos(-camRot.y);
+    float sinPitch = sin(-camRot.y);
+    float cosRoll = cos(-camRot.z);
+    float sinRoll = sin(-camRot.z);
 
-	// Avoid division by zero or near-zero
-	if (perspscale <= 0.0001f) {
-		this->x = this->y = -99999;  // or sentinel value for culling
-		return;
-	}
+    // Yaw (around Y axis)
+    float x1 = cosYaw * dx - sinYaw * dz;
+    float z1 = sinYaw * dx + cosYaw * dz;
+    float y1 = dy;
 
-	this->x = dx / perspscale + screenwidth * 0.5f;
-	this->y = dz / perspscale + screenheight * 0.5f;
+    // Pitch (around X axis)
+    float y2 = cosPitch * y1 - sinPitch * z1;
+    float z2 = sinPitch * y1 + cosPitch * z1;
+    float x2 = x1;
+
+    // Roll (around Z axis)
+    float x3 = cosRoll * x2 - sinRoll * y2;
+    float y3 = sinRoll * x2 + cosRoll * y2;
+    float z3 = z2;
+
+    // Perspective projection
+    float pf = perspectiveFac / screenheight;
+    float perspscale = pf * y3;
+
+    if (perspscale <= 0.0001f) {
+        this->x = this->y = -99999;  // sentinel
+        return;
+    }
+
+    this->x = x3 / perspscale + screenwidth * 0.5f;
+    this->y = z3 / perspscale + screenheight * 0.5f;
 }
 
 Point2d operator+(const Point2d& p1, const Point2d& p2) { return Point2d(p1.x + p2.x, p1.y + p2.y); }

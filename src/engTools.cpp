@@ -112,6 +112,28 @@ Position3d Position3d::cameraspace()
 	if (currentScene->currentCam != nullptr)
 	{
 		cs = *this - currentScene->currentCam->pos;
+		Rotation3d rot = currentScene->currentCam->rot;
+
+		float cy = cos(-rot.x); // yaw
+		float sy = sin(-rot.x);
+		float cp = cos(-rot.y); // pitch
+		float sp = sin(-rot.y);
+		float cr = cos(-rot.z); // roll
+		float sr = sin(-rot.z);
+
+		// Apply Yaw (around Y), Pitch (X), then Roll (Z)
+		float x1 = cy * cs.x - sy * cs.z;
+		float z1 = sy * cs.x + cy * cs.z;
+		float y1 = cs.y;
+
+		float y2 = cp * y1 - sp * z1;
+		float z2 = sp * y1 + cp * z1;
+		float x2 = x1;
+
+		float x3 = cr * x2 - sr * y2;
+		float y3 = sr * x2 + cr * y2;
+		float z3 = z2;
+		cs = Position3d(x3, y3, z3);
 	}
 	return cs;
 }

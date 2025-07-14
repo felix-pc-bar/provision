@@ -67,15 +67,18 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += freecamspeed; }
 
-		//vp.drawMesh(testmesh);
+		if (gk[SDL_SCANCODE_I]) { mainScene.cams[0].rot.y += 0.05; }
+		if (gk[SDL_SCANCODE_K]) { mainScene.cams[0].rot.y -= 0.05; }
+		if (gk[SDL_SCANCODE_J]) { mainScene.cams[0].rot.z += 0.05; }
+		if (gk[SDL_SCANCODE_L]) { mainScene.cams[0].rot.z -= 0.05; }
+
+		//cout << mainScene.meshes[0].position.cameraspace() << endl;
 		vp.drawScene(*currentScene);
 		vp.Present();
 		frame++;
-		//triangleMesh.move(Position3d{ 0.01f,0.0f,0.0f });
 		vp.Clear(0xFF000000);
-		mainScene.meshes[0].rotate({ 0.0f, 0.0f, 0.1f });
-		//cout << frame / 10 << endl;
-		mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
+		//mainScene.meshes[0].rotate({ 0.0f, 0.0f, 0.1f });
+		//mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
 	}
 
 	system("pause");
