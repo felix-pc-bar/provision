@@ -50,7 +50,7 @@ int main(int argc, char** args) {
 	float freecamspeed;
 	mainScene.cams[0].pos.y -= 2;
 	int frame = 0;
-
+	cout << mainScene.cams[0].rot.pitch << mainScene.cams[0].rot.yaw << mainScene.cams[0].rot.roll << endl;
 	while (true)
 	{
 		while (SDL_PollEvent(&event)) {
@@ -59,18 +59,22 @@ int main(int argc, char** args) {
 			}
 		}
 		// Handle inputs
+
+		mainScene.cams[0].calcBaseVecs();
+
 		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = 0.05f; }
 		else { freecamspeed = 0.01f; }
-		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos.y += freecamspeed; }
-		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos.y -= freecamspeed; }
-		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= freecamspeed; }
-		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += freecamspeed; }
+		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
+		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos -= mainScene.cams[0].forward * freecamspeed; }
+		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos -= mainScene.cams[0].right * freecamspeed; }
+		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos += mainScene.cams[0].right * freecamspeed; }
 
-		if (gk[SDL_SCANCODE_I]) { mainScene.cams[0].rot.y += 0.05; }
-		if (gk[SDL_SCANCODE_K]) { mainScene.cams[0].rot.y -= 0.05; }
-		if (gk[SDL_SCANCODE_J]) { mainScene.cams[0].rot.z += 0.05; }
-		if (gk[SDL_SCANCODE_L]) { mainScene.cams[0].rot.z -= 0.05; }
+		if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
+		if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
+		if (gk[SDL_SCANCODE_I]) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
+		if (gk[SDL_SCANCODE_K]) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
+
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;
 		vp.drawScene(*currentScene);

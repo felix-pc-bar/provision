@@ -30,8 +30,10 @@ public:
 	friend Position3d operator-(const Position3d& p1, const Position3d& p2);
 	friend Position3d operator*(const Position3d& p1, const Position3d& p2);
 	friend Position3d operator/(const Position3d& p1, const float div);
+	friend Position3d operator*(const Position3d& p1, const float mpcand);
 
 	Position3d& operator+=(const Position3d& other);
+	Position3d& operator-=(const Position3d& other);
 
 	friend bool operator==(const Position3d& p1, const Position3d& p2);
 };
@@ -39,7 +41,7 @@ public:
 class Rotation3d
 {
 public:
-	float x, y, z;
+	float pitch, yaw, roll;
 	Rotation3d();
 	Rotation3d(float x_, float y_, float z_);
 	friend Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2);
@@ -53,6 +55,12 @@ class Camera
 public:
 	Position3d pos;
 	Rotation3d rot;
+
+	Position3d forward;
+	Position3d right;
+	Position3d up;
+
+	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 };
 
 class Vertex3d

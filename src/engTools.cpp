@@ -15,6 +15,7 @@ Vertex3d::Vertex3d(Position3d pos)
 Position3d operator+(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
 Position3d operator-(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z); }
 Position3d operator*(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
+Position3d operator*(const Position3d& p1, const float mpcand) { return Position3d(p1.x * mpcand, p1.y * mpcand, p1.z * mpcand); }
 Position3d operator/(const Position3d& p1, const float div) { return Position3d(p1.x / div, p1.y / div, p1.z / div); }
 bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.y == p2.y && p1.z == p2.z) ? true : false; }
 
@@ -22,6 +23,13 @@ Position3d& Position3d::operator+=(const Position3d& other) {
 	x += other.x;
 	y += other.y;
 	z += other.z;
+	return *this;
+}
+
+Position3d& Position3d::operator-=(const Position3d& other) {
+	x -= other.x;
+	y -= other.y;
+	z -= other.z;
 	return *this;
 }
 
@@ -58,20 +66,20 @@ void Position3d::rotateAroundPoint(const Rotation3d& rotation, const Position3d&
 	float z = this->z - pivot.z;
 
 	// Rotate around Z
-	float cosZ = cos(rotation.z);
-	float sinZ = sin(rotation.z);
+	float cosZ = cos(rotation.roll);
+	float sinZ = sin(rotation.roll);
 	float x1 = cosZ * x - sinZ * y;
 	float y1 = sinZ * x + cosZ * y;
 
 	// Rotate around Y
-	float cosY = cos(rotation.y);
-	float sinY = sin(rotation.y);
+	float cosY = cos(rotation.yaw);
+	float sinY = sin(rotation.yaw);
 	float x2 = cosY * x1 + sinY * z;
 	float z1 = -sinY * x1 + cosY * z;
 
 	// Rotate around X
-	float cosX = cos(rotation.x);
-	float sinX = sin(rotation.x);
+	float cosX = cos(rotation.pitch);
+	float sinX = sin(rotation.pitch);
 	float y2 = cosX * y1 - sinX * z1;
 	float z2 = sinX * y1 + cosX * z1;
 
@@ -114,12 +122,12 @@ Position3d Position3d::cameraspace()
 		cs = *this - currentScene->currentCam->pos;
 		Rotation3d rot = currentScene->currentCam->rot;
 
-		float cy = cos(-rot.x); // yaw
-		float sy = sin(-rot.x);
-		float cp = cos(-rot.y); // pitch
-		float sp = sin(-rot.y);
-		float cr = cos(-rot.z); // roll
-		float sr = sin(-rot.z);
+		float cy = cos(-rot.yaw); // yaw
+		float sy = sin(-rot.yaw);
+		float cp = cos(-rot.pitch); // pitch
+		float sp = sin(-rot.pitch);
+		float cr = cos(-rot.roll); // roll
+		float sr = sin(-rot.roll);
 
 		// Apply Yaw (around Y), Pitch (X), then Roll (Z)
 		float x1 = cy * cs.x - sy * cs.z;
@@ -182,14 +190,14 @@ void Mesh::setPos(Position3d pos)
 	this->move(offset);
 }
 
-Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
-Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z); }
-Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
+Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.pitch + p2.pitch, p1.yaw + p2.yaw, p1.roll + p2.roll); }
+Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.pitch - p2.pitch, p1.yaw - p2.yaw, p1.roll - p2.roll); }
+Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2) { return Rotation3d(p1.pitch * p2.pitch, p1.yaw * p2.yaw, p1.roll * p2.roll); }
 
 Rotation3d& Rotation3d::operator+=(const Rotation3d& other) {
-	x += other.x;
-	y += other.y;
-	z += other.z;
+	pitch += other.pitch;
+	yaw += other.yaw;
+	roll += other.roll;
 	return *this;
 }
 
@@ -223,13 +231,38 @@ void Mesh::setRotation(const Rotation3d& rot)
 	this->rotate(offset);
 }
 
-Rotation3d::Rotation3d() { x = 0; y = 0; z = 0; }
+Rotation3d::Rotation3d() { pitch = 0; yaw = 0; roll = 0; }
 
 Rotation3d::Rotation3d(float x_, float y_, float z_)
 {
-	this->x = x_;
-	this->y = y_;
-	this->z = z_;
+	this->pitch = x_;
+	this->yaw = y_;
+	this->roll = z_;
 }
 
 Camera* currentCam = nullptr;
+
+void Camera::calcBaseVecs()
+{
+	float cy = cos(this->rot.yaw);
+	float sy = sin(this->rot.yaw);
+	float cp = cos(this->rot.pitch);
+	float sp = sin(this->rot.pitch);
+
+	// Forward vector (direction camera is looking)
+	this->forward = {
+		sy * cp,
+		sp,
+		cy * cp
+	};
+
+	// Right vector (perpendicular to forward, assuming world up is {0,1,0})
+	this->right = {
+		cy,
+		0,
+		-sy
+	};
+
+	// Up vector (optional, can be cross(forward, right))
+	this->up = forward.cross(right);
+}
