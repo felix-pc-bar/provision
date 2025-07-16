@@ -48,7 +48,7 @@ int main(int argc, char** args) {
 	const Uint8* gk; 
 	SDL_Event event;
 	float freecamspeed;
-	mainScene.cams[0].pos.y -= 2;
+	mainScene.cams[0].pos.z -= 2;
 	int frame = 0;
 
 	while (true)
@@ -62,8 +62,8 @@ int main(int argc, char** args) {
 		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = 0.05f; }
 		else { freecamspeed = 0.01f; }
-		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos.y += freecamspeed; }
-		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos.y -= freecamspeed; }
+		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos.z += freecamspeed; }
+		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos.z -= freecamspeed; }
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += freecamspeed; }
 

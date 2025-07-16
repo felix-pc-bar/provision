@@ -98,7 +98,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 	
 	// Cull tris behind the camera viewplane 
 	// TODO: cull more agressively to frustrum?
-	if (v1.position.cameraspace().y <= 0 && v2.position.cameraspace().y <= 0 && v3.position.cameraspace().y <= 0)
+	if (v1.position.cameraspace().z <= 0 && v2.position.cameraspace().z <= 0 && v3.position.cameraspace().z <= 0)
 	{
 		//cout << v1.position.cameraspace() << endl;
 		return;

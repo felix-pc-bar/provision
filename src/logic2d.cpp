@@ -15,8 +15,8 @@ Point2d::Point2d(const Vertex3d& from3d)
 
     // Translate world position to camera-relative coordinates
     float dx = from3d.position.x - camPos.x;
-    float dy = from3d.position.y - camPos.y;
-    float dz = from3d.position.z - camPos.z;
+    float dy = from3d.position.z - camPos.z;
+    float dz = from3d.position.y - camPos.y;
 
     // Apply inverse camera rotation (i.e. rotate world opposite to camera)
     float cosYaw = cos(-camRot.x);

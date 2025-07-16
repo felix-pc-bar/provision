@@ -12,16 +12,16 @@ Vertex3d::Vertex3d(Position3d pos)
 }
 
 
-Position3d operator+(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x + p2.x, p1.y + p2.y, p1.z + p2.z); }
-Position3d operator-(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x - p2.x, p1.y - p2.y, p1.z - p2.z); }
-Position3d operator*(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x * p2.x, p1.y * p2.y, p1.z * p2.z); }
-Position3d operator/(const Position3d& p1, const float div) { return Position3d(p1.x / div, p1.y / div, p1.z / div); }
-bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.y == p2.y && p1.z == p2.z) ? true : false; }
+Position3d operator+(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x + p2.x, p1.z + p2.z, p1.y + p2.y); }
+Position3d operator-(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x - p2.x, p1.z - p2.z, p1.y - p2.y); }
+Position3d operator*(const Position3d& p1, const Position3d& p2) { return Position3d(p1.x * p2.x, p1.z * p2.z, p1.y * p2.y); }
+Position3d operator/(const Position3d& p1, const float div) { return Position3d(p1.x / div, p1.z / div, p1.y / div); }
+bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.z == p2.z && p1.y == p2.y) ? true : false; }
 
 Position3d& Position3d::operator+=(const Position3d& other) {
 	x += other.x;
-	y += other.y;
 	z += other.z;
+	y += other.y;
 	return *this;
 }
 
@@ -38,15 +38,15 @@ void Vertex3d::rotatePosition(const Rotation3d& rot, const Position3d& pivot)
 Position3d::Position3d() //if not passed a position, we just put it at origin
 {
 	this->x = 0;
-	this->y = 0;
 	this->z = 0;
+	this->y = 0;
 }
 
 Position3d::Position3d(double xPos, double yPos, double zPos)
 {
 	this->x = xPos;
-	this->y = yPos;
-	this->z = zPos;
+	this->z = yPos;
+	this->y = zPos;
 }
 
 // just the rotation matrices hardcoded (it's not like we're gonna want skew later on, right?)
@@ -54,8 +54,8 @@ void Position3d::rotateAroundPoint(const Rotation3d& rotation, const Position3d&
 {
 	// Translate to origin relative to pivot
 	float x = this->x - pivot.x;
-	float y = this->y - pivot.y;
-	float z = this->z - pivot.z;
+	float y = this->z - pivot.z;
+	float z = this->y - pivot.y;
 
 	// Rotate around Z
 	float cosZ = cos(rotation.z);
@@ -77,32 +77,32 @@ void Position3d::rotateAroundPoint(const Rotation3d& rotation, const Position3d&
 
 	// Translate back from origin
 	this->x = x2 + pivot.x;
-	this->y = y2 + pivot.y;
-	this->z = z2 + pivot.z;
+	this->z = y2 + pivot.z;
+	this->y = z2 + pivot.y;
 }
 
 
 Position3d Position3d::cross(const Position3d& operand) const
 {
 	return Position3d(
-		y * operand.z - z * operand.y,
-		z * operand.x - x * operand.z,
-		x * operand.y - y * operand.x
+		z * operand.y - y * operand.z,
+		y * operand.x - x * operand.y,
+		x * operand.z - z * operand.x
 	);
 }
 float Position3d::dot(const Position3d& operand) const
 {
-	return x * operand.x * y * operand.y + z * operand.z;
+	return x * operand.x * z * operand.z + y * operand.y;
 }
 
 void Position3d::normalise()
 {
-	float magnitude = std::sqrt(x * x + y * y + z * z); // find magnitude by pythaagoras
+	float magnitude = std::sqrt(x * x + z * z + y * y); // find magnitude by pythaagoras
 	if (magnitude > 0.0f)
 	{
 		x /= magnitude;
-		y /= magnitude;
 		z /= magnitude;
+		y /= magnitude;
 	}
 }
 
@@ -122,9 +122,9 @@ Position3d Position3d::cameraspace()
 		float sr = sin(-rot.z);
 
 		// Apply Yaw (around Y), Pitch (X), then Roll (Z)
-		float x1 = cy * cs.x - sy * cs.z;
-		float z1 = sy * cs.x + cy * cs.z;
-		float y1 = cs.y;
+		float x1 = cy * cs.x - sy * cs.y;
+		float z1 = sy * cs.x + cy * cs.y;
+		float y1 = cs.z;
 
 		float y2 = cp * y1 - sp * z1;
 		float z2 = sp * y1 + cp * z1;
@@ -140,11 +140,11 @@ Position3d Position3d::cameraspace()
 
 //float Position3d::lengthSquared() const { return this->dot(*this); }
 float Position3d::lengthSquared() const {
-	return x * x + y * y + z * z; }
+	return x * x + z * z + y * y; }
 
 ostream& operator<< (ostream& os, Position3d pos)
 {
-	return os << "[" << pos.x << " " << pos.y << " " << pos.z << "]";
+	return os << "[" << pos.x << " " << pos.z << " " << pos.y << "]";
 }
 
 
