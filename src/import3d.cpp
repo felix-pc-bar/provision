@@ -41,6 +41,6 @@ Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, U
 		std::cout << "Imported " << filepath << " - " << result.vertices.size() << " vertices" << std::endl;
 		return result;
 	}
-	std::cout << "Import error" << endl;;
+	std::cout << "Import error" << endl;
 	return result;
 }
