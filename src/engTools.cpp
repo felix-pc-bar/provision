@@ -242,7 +242,7 @@ Rotation3d::Rotation3d(float x_, float y_, float z_)
 
 Camera* currentCam = nullptr;
 
-void Camera::calcBaseVecs()
+void Camera::calcBaseVecs() 
 {
 	float cy = cos(this->rot.yaw);
 	float sy = sin(this->rot.yaw);
@@ -252,17 +252,13 @@ void Camera::calcBaseVecs()
 	// Forward vector (direction camera is looking)
 	this->forward = {
 		sy * cp,
-		sp,
-		cy * cp
+		cy * cp,
+		sp
 	};
 
-	// Right vector (perpendicular to forward, assuming world up is {0,1,0})
-	this->right = {
-		cy,
-		0,
-		-sy
-	};
+	const Position3d worldUp = { 0,-1,0 };
+	this->right = forward.cross(worldUp);
+	this->right.normalise();
 
-	// Up vector (optional, can be cross(forward, right))
 	this->up = forward.cross(right);
 }

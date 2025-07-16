@@ -37,6 +37,7 @@ int main(int argc, char** args) {
 	SDL_SetWindowTitle(window, "Barbershop");
 	
 	// Init
+	const float pi = 3.14159f;
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
 	Scene mainScene; //Create main scene
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
@@ -48,9 +49,11 @@ int main(int argc, char** args) {
 	const Uint8* gk; 
 	SDL_Event event;
 	float freecamspeed;
-	mainScene.cams[0].pos.y -= 2;
+	mainScene.cams[0].pos.z -= 2;
+	mainScene.cams[0].rot.pitch += pi / 2;
 	int frame = 0;
 	cout << mainScene.cams[0].rot.pitch << mainScene.cams[0].rot.yaw << mainScene.cams[0].rot.roll << endl;
+
 	while (true)
 	{
 		while (SDL_PollEvent(&event)) {
@@ -69,11 +72,12 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos -= mainScene.cams[0].forward * freecamspeed; }
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos -= mainScene.cams[0].right * freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos += mainScene.cams[0].right * freecamspeed; }
-
+		cout << mainScene.cams[0].forward << endl;
+		Rotation3d& camRot = mainScene.cams[0].rot;
 		if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
 		if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
-		if (gk[SDL_SCANCODE_I]) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
-		if (gk[SDL_SCANCODE_K]) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
+		if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
+		if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
 
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;
