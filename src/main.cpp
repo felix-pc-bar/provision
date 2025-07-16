@@ -67,10 +67,10 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos.x -= freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos.x += freecamspeed; }
 
-		if (gk[SDL_SCANCODE_I]) { mainScene.cams[0].rot.y += 0.05; }
-		if (gk[SDL_SCANCODE_K]) { mainScene.cams[0].rot.y -= 0.05; }
-		if (gk[SDL_SCANCODE_J]) { mainScene.cams[0].rot.z += 0.05; }
-		if (gk[SDL_SCANCODE_L]) { mainScene.cams[0].rot.z -= 0.05; }
+		if (gk[SDL_SCANCODE_I]) { mainScene.cams[0].rot.yaw += 0.05; }
+		if (gk[SDL_SCANCODE_K]) { mainScene.cams[0].rot.yaw -= 0.05; }
+		if (gk[SDL_SCANCODE_J]) { mainScene.cams[0].rot.roll += 0.05; }
+		if (gk[SDL_SCANCODE_L]) { mainScene.cams[0].rot.roll -= 0.05; }
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;
 		vp.drawScene(*currentScene);

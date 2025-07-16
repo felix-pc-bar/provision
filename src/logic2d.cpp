@@ -19,12 +19,12 @@ Point2d::Point2d(const Vertex3d& from3d)
     float dz = from3d.position.y - camPos.y;
 
     // Apply inverse camera rotation (i.e. rotate world opposite to camera)
-    float cosYaw = cos(-camRot.x);
-    float sinYaw = sin(-camRot.x);
-    float cosPitch = cos(-camRot.y);
-    float sinPitch = sin(-camRot.y);
-    float cosRoll = cos(-camRot.z);
-    float sinRoll = sin(-camRot.z);
+    float cosYaw = cos(-camRot.pitch);
+    float sinYaw = sin(-camRot.pitch);
+    float cosPitch = cos(-camRot.yaw);
+    float sinPitch = sin(-camRot.yaw);
+    float cosRoll = cos(-camRot.roll);
+    float sinRoll = sin(-camRot.roll);
 
     // Yaw (around Y axis)
     float x1 = cosYaw * dx - sinYaw * dz;

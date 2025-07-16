@@ -13,7 +13,7 @@ class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a
 private:
 public:
 	double x, y, z;
-	Position3d(double xPos, double yPos, double zPos);
+	Position3d(double xPos, double zPos, double yPos);
 	Position3d();
 	Position3d cameraspace();
 	void rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot);
@@ -39,7 +39,7 @@ public:
 class Rotation3d
 {
 public:
-	float x, y, z;
+	float pitch, yaw, roll;
 	Rotation3d();
 	Rotation3d(float x_, float y_, float z_);
 	friend Rotation3d operator+(const Rotation3d& p1, const Rotation3d& p2);
