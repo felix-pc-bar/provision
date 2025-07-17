@@ -37,7 +37,6 @@ int main(int argc, char** args) {
 	SDL_SetWindowTitle(window, "Barbershop");
 	
 	// Init
-	const float pi = 3.14159f;
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
 	Scene mainScene; //Create main scene
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
@@ -72,7 +71,8 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos -= mainScene.cams[0].forward * freecamspeed; }
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos += mainScene.cams[0].left * freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos -= mainScene.cams[0].left * freecamspeed; }
-		cout << mainScene.cams[0].left << endl;
+		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
+		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left

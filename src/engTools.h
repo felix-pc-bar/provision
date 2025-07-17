@@ -22,6 +22,7 @@ public:
 	Position3d cross(const Position3d& operand) const;
 	float dot(const Position3d& operand) const;
 	void normalise();
+	void flip();
 	float lengthSquared() const;
 
 
@@ -107,3 +108,4 @@ public:
 
 extern Scene* currentScene;
 
+const float pi = 3.14159f; // looks like a good place to me 

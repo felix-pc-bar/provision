@@ -114,6 +114,13 @@ void Position3d::normalise()
 	}
 }
 
+void Position3d::flip()
+{
+	this->x = -this->x;
+	this->y = -this->y;
+	this->z = -this->z;
+}
+
 Position3d Position3d::cameraspace()
 {	
 	Position3d cs;
@@ -261,5 +268,6 @@ void Camera::calcBaseVecs()
 	this->left.normalise();
 
 	this->forward = up.cross(left);
+	if (this->rot.pitch > pi / 2) { forward.flip(); left.flip(); } // i hate it i hate it i hate it why why why why why y
 	up.normalise();
 }
