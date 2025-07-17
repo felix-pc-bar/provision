@@ -249,16 +249,17 @@ void Camera::calcBaseVecs()
 	float cp = cos(this->rot.pitch);
 	float sp = sin(this->rot.pitch);
 
-	// Forward vector (direction camera is looking)
-	this->forward = {
+	this->up = {
 		sy * cp,
-		cy * cp,
-		sp
+		sp,
+		-cp * cy
 	};
+	up.normalise();
 
-	const Position3d worldUp = { 0,-1,0 };
-	this->right = forward.cross(worldUp);
-	this->right.normalise();
+	const Position3d worldUp = { 0,1,0 };
+	this->left = worldUp.cross(up);
+	this->left.normalise();
 
-	this->up = forward.cross(right);
+	this->forward = up.cross(left);
+	up.normalise();
 }
