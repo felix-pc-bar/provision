@@ -34,7 +34,8 @@ Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, U
 					faceIndices.push_back(vIndex);
 				}
 
-				result.addFace(faceIndices);  // You may want to triangulate here
+				result.addFace(faceIndices);
+				result.matIndices.push_back(0); // For now, assign material 0 to every tri
 
 			}
 		}

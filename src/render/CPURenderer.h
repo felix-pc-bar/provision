@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include "../logic2d.h"
+#include "../engTools.h"
 
 class CPURenderer {
 public:
@@ -11,7 +12,7 @@ public:
 	void Present(); // push pixels to texture and draw to screen
 	void drawMesh(Mesh& mesh); // Old; maybe use for UI draw in future
 	void drawScene(Scene& scene);
-	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3); // Draw a triangle in screen space
+	void drawTri(Vertex3d& v1,Vertex3d& v2,Vertex3d& v3, Colour triCol); // Draw a triangle in screen space
 private:
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* texture;
@@ -25,7 +26,7 @@ struct TriangleToRender
 {
 	Vertex3d v1, v2, v3;
 	float distanceToCamera;
-
-	TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos);
+	Material material;
+	TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos, Material* mat);
 };
 

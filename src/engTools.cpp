@@ -162,6 +162,35 @@ ostream& operator<< (ostream& os, Position3d pos)
 	return os << "[" << pos.x << " " << pos.y << " " << pos.z << "]";
 }
 
+Material::Material()
+{
+	this->colour = { 1,1,1 };
+}
+
+Material::Material(float r, float g, float b)
+{
+	this->colour.red = r;
+	this->colour.green = g;
+	this->colour.blue = b;
+}
+Colour::Colour(float r, float g, float b) : red(r), green(g), blue(b) {}
+
+Colour::Colour() : red(1), green(1), blue(1) {}
+
+Colour& Colour::operator*=(const float val)
+{
+	red *= val;
+	green *= val;
+	blue *= val;
+	return *this;
+}
+uint32_t Colour::raw()
+{
+	return	(0xFF << 24) |
+			((uint32_t)(0xFF * this->red) << 16) |
+			((uint32_t)(0xFF * this->green) << 8)|
+			((uint32_t)(0xFF * this->blue));
+}
 
 Mesh::Mesh() { 
 	//this->addVertex(Position3d{ 0.0f, 1.0f, 0.5f });

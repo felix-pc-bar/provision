@@ -44,6 +44,7 @@ int main(int argc, char** args) {
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 	//mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/ico2.obj"));
 	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/sz2.obj"));
+	mainScene.meshes[0].materials.emplace_back(0, 1, 0);
 	//mainScene.meshes[1].move({ 0.5, 2, 0 });
 	const Uint8* gk; 
 	SDL_Event event;

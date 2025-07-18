@@ -1,6 +1,5 @@
 #include "CPURenderer.h"
 #include "../engconfig.h"
-#include "../engTools.h"
 #include <iostream>
 #include <vector>
 #include <cstdint>
@@ -8,15 +7,16 @@
 
 using std::endl, std::cout;
 
-TriangleToRender::TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos) : v1(a), v2(b), v3(c)
-	{
-		Position3d center = (a.position + b.position + c.position) / 3.0f;
-		Position3d diff = center - camPos;
-		distanceToCamera = diff.lengthSquared(); // faster than .length()
-	}
+TriangleToRender::TriangleToRender(const Vertex3d& a, const Vertex3d& b, const Vertex3d& c, const Position3d& camPos, Material* mat) : v1(a), v2(b), v3(c)
+{
+	this->material = *mat;
+	Position3d center = (a.position + b.position + c.position) / 3.0f;
+	Position3d diff = center - camPos;
+	distanceToCamera = diff.lengthSquared();
+}
 
 
-CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h) //Member initialiser list; constructer sets ob vars 
+CPURenderer::CPURenderer(SDL_Renderer* renderer, int w, int h): sdlRenderer(renderer), width(w), height(h)
 {
 	texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, width, height);
 	pixelBuffer.resize(width * height, 0xFF000000); // opaque black
@@ -47,7 +47,7 @@ void CPURenderer::drawMesh(Mesh& mesh)
 		Vertex3d v1 = mesh.vertices[mesh.indices[i]];
 		Vertex3d v2 = mesh.vertices[mesh.indices[i+1]];
 		Vertex3d v3 = mesh.vertices[mesh.indices[i+2]];
-		drawTri(v1, v2, v3);
+		drawTri(v1, v2, v3, {1,1,1});
 	}
 }
 
@@ -67,13 +67,8 @@ void CPURenderer::drawScene(Scene& scene)
 			Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
 			Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
 			Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
-			//v1.offsetPosition(pos);
-			//v2.offsetPosition(pos);
-			//v3.offsetPosition(pos);
-			//v1.rotatePosition(rot, pos);
-			//v2.rotatePosition(rot, pos);
-			//v3.rotatePosition(rot, pos);
-			triangles.emplace_back(v1, v2, v3, camPos);
+			Material mat = mesh.materials[mesh.matIndices[i / 3]];
+			triangles.emplace_back(v1, v2, v3, camPos, &mat);
 		}
 	}
 
@@ -86,11 +81,11 @@ void CPURenderer::drawScene(Scene& scene)
 	// Draw
 	for (TriangleToRender& tri : triangles)
 	{
-		drawTri(tri.v1, tri.v2, tri.v3);
+		drawTri(tri.v1, tri.v2, tri.v3, tri.material.colour);
 	}
 }
 
-void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
+void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Colour triCol)
 {
 	Point2d p1(v1);
 	Point2d p2(v2);
@@ -119,8 +114,8 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3)
 
 	float dot = normal.dot(lightNormal);
 	float value = 0.25f * dot + 0.75f;
-	uint8_t intensity = static_cast<uint8_t>(value * 255);
-	uint32_t colour = (0xFF << 24) | (intensity << 16) | (intensity << 8) | intensity;
+	triCol *= value;
+	uint32_t colour = triCol.raw();
 
 	if (!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight))
 		return;

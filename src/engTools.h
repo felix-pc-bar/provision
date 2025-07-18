@@ -73,6 +73,27 @@ public:
 	void rotatePosition(const Rotation3d& rot, const Position3d& pivot);
 };
 
+class Colour // Store colour as decimal fractions of RGB
+{
+public:
+	Colour();
+	Colour(float r, float g, float b);
+	uint32_t raw();
+	Colour& operator*=(const float val);
+
+	
+	float red;
+	float green;
+	float blue;
+};
+class Material
+{
+public:
+	Material();
+	Material(float r, float g, float b);
+	Colour colour;
+};
+
 class Mesh
 {
 public:
@@ -90,6 +111,9 @@ public:
 	// pivoting by object origin (assumed)
 	void rotate(const Rotation3d& rot); 
 	void setRotation(const Rotation3d& rot); 
+
+	vector<Material> materials;
+	vector<int> matIndices; // Stores an index of materials corresponding to each tri
 
 	Position3d position;
 	Rotation3d rotation;
