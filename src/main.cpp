@@ -37,31 +37,46 @@ int main(int argc, char** args) {
 	SDL_SetWindowTitle(window, "Barbershop");
 	
 	// Init
+	// Lock the mouse to the window and hide the cursor
+	SDL_ShowCursor(SDL_DISABLE);
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
+
 	Scene mainScene; //Create main scene
-	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	currentScene = &mainScene; // Set the current scene to mainScene
+	
+	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
-	//mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/ico2.obj"));
-	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/sz2.obj"));
-	mainScene.meshes[0].materials.emplace_back(0, 1, 0);
-	//mainScene.meshes[1].move({ 0.5, 2, 0 });
-	const Uint8* gk; 
-	SDL_Event event;
-	float freecamspeed;
 	mainScene.cams[0].pos.z -= 2;
 	mainScene.cams[0].rot.pitch += pi / 2;
+
+	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/sz2.obj"));
+	mainScene.meshes[0].materials.emplace_back(0.5f, 1.0f, 0.5f);
+	
+	const Uint8* gk; 
+	SDL_Event event;
+
+	float freecamspeed;
 	int frame = 0;
-	cout << mainScene.cams[0].rot.pitch << mainScene.cams[0].rot.yaw << mainScene.cams[0].rot.roll << endl;
 
 	while (true)
 	{
+		Rotation3d& camRot = mainScene.cams[0].rot;
+		// Handle inputs
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				return 0;  
 			}
+			if (event.type == SDL_MOUSEMOTION)
+			{
+				mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
+				float pitchDelta = (float)event.motion.yrel / 1000.0f;
+				pitchDelta = std::min(pitchDelta, camRot.pitch);
+				pitchDelta = std::max(pitchDelta, -(pi - camRot.pitch));
+				mainScene.cams[0].rot.pitch -= pitchDelta;
+			}
 		}
-		// Handle inputs
 
 		mainScene.cams[0].calcBaseVecs();
 
@@ -75,7 +90,6 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 
-		Rotation3d& camRot = mainScene.cams[0].rot;
 		if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
 		if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
 		if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
