@@ -51,7 +51,7 @@ int main(int argc, char** args) {
 	mainScene.cams[0].pos.z -= 2;
 	mainScene.cams[0].rot.pitch += pi / 2;
 
-	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/sz2.obj"));
+	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/inside.obj"));
 	mainScene.meshes[0].materials.emplace_back(0.5f, 1.0f, 0.5f);
 	
 	const Uint8* gk; 
@@ -90,10 +90,10 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 
-		if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
-		if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
-		if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
-		if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
+		//if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
+		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
+		//if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
+		//if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
 
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;

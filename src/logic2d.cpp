@@ -74,7 +74,7 @@ int edgeSideSS(const Point2d& origin, const Point2d& reference, const Point2d& t
 bool isTriangleOnScreen(const Point2d& p1, const Point2d& p2, const Point2d& p3, int screenWidth, int screenHeight)
 {
 	auto inBounds = [=](const Point2d& p) {
-		return p.x >= 0 && p.x < screenWidth && p.y >= 0 && p.y < screenHeight;
+		return p.x >= 0 && p.x < screenWidth * 1.5 && p.y >= 0 && p.y < screenHeight * 1.5;
 		};
 
 	return inBounds(p1) || inBounds(p2) || inBounds(p3);
