@@ -83,12 +83,12 @@ int main(int argc, char** args) {
 		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = 0.05f; }
 		else { freecamspeed = 0.01f; }
-		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
-		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
-		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos += mainScene.cams[0].left * freecamspeed; }
-		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos -= mainScene.cams[0].left * freecamspeed; }
-		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
-		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
+		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
+		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos -= mainScene.cams[0].forward * freecamspeed; }
+		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos += mainScene.cams[0].right * freecamspeed; }
+		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos -= mainScene.cams[0].right * freecamspeed; }
+		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
+		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 
 		//if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
 		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right

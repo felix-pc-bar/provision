@@ -285,18 +285,18 @@ void Camera::calcBaseVecs()
 	float cp = cos(this->rot.pitch);
 	float sp = sin(this->rot.pitch);
 
-	this->up = {
-		sy * cp,
-		sp,
-		-cp * cy
+	this->forward = {
+		-sy * cp,
+		-sp,
+		cp * cy
 	};
-	up.normalise();
+	forward.normalise();
 
 	const Position3d worldUp = { 0,1,0 };
-	this->left = worldUp.cross(up);
-	this->left.normalise();
+	this->right = worldUp.cross(forward);
+	this->right.normalise();
 
-	this->forward = up.cross(left);
-	if (this->rot.pitch > pi / 2) { forward.flip(); left.flip(); } // i hate it i hate it i hate it why why why why why y
-	up.normalise();
+	this->up = forward.cross(right);
+	if (this->rot.pitch > pi / 2) { up.flip(); right.flip(); } // i hate it i hate it i hate it why why why why why y
+	forward.normalise();
 }

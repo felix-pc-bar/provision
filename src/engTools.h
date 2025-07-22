@@ -57,9 +57,9 @@ public:
 	Position3d pos;
 	Rotation3d rot;
 
-	Position3d forward;
-	Position3d left;
 	Position3d up;
+	Position3d right;
+	Position3d forward;
 
 	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 };
