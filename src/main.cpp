@@ -72,8 +72,8 @@ int main(int argc, char** args) {
 			{
 				mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
 				float pitchDelta = (float)event.motion.yrel / 1000.0f;
-				//pitchDelta = std::min(pitchDelta, camRot.pitch);
-				//pitchDelta = std::max(pitchDelta, -(pi - camRot.pitch));
+				pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
+				pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
 				mainScene.cams[0].rot.pitch += pitchDelta;
 			}
 		}

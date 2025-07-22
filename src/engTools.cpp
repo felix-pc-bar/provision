@@ -297,6 +297,6 @@ void Camera::calcBaseVecs()
 	this->right.normalise();
 
 	this->up = forward.cross(right);
-	if (this->rot.pitch > pi / 2) { up.flip(); right.flip(); } // i hate it i hate it i hate it why why why why why y
+	//if (this->rot.pitch > pi / 2) { up.flip(); right.flip(); } // i hate it i hate it i hate it why why why why why y
 	forward.normalise();
 }
