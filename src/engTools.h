@@ -15,7 +15,7 @@ public:
 	double x, y, z;
 	Position3d(double xPos, double yPos, double zPos);
 	Position3d();
-	Position3d cameraspace();
+	Position3d cameraspace() const;
 	void rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot);
 
 	// Vector stuff

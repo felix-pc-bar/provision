@@ -121,12 +121,12 @@ void Position3d::flip()
 	this->z = -this->z;
 }
 
-Position3d Position3d::cameraspace()
+Position3d Position3d::cameraspace() const
 {	
 	Position3d cs;
 	if (currentScene->currentCam != nullptr)
 	{
-		cs = *this - currentScene->currentCam->pos;
+		cs = *this - currentScene->currentCam->pos; // Set cameraspace position by subtracting camera pos from this pos
 		Rotation3d rot = currentScene->currentCam->rot;
 
 		float cy = cos(-rot.yaw); // yaw
