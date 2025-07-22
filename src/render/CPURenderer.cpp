@@ -93,7 +93,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Colour triCo
 	
 	// Cull tris behind the camera viewplane 
 	// TODO: cull more agressively to frustrum?
-	if ((v1.position.cameraspace().y <= 0 && v2.position.cameraspace().y <= 0 && v3.position.cameraspace().y <= 0) || 
+	if ((v1.position.cameraspace().z <= 0 && v2.position.cameraspace().z <= 0 && v3.position.cameraspace().z <= 0) || 
 		(!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) ||
 		(p1.x == -99999 || p2.x == -99999 || p3.x == -99999)
 		)
@@ -119,6 +119,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Colour triCo
 	float value = 0.25f * dot + 0.75f;
 	triCol *= value;
 	uint32_t colour = triCol.raw();
+	//uint32_t colour = 0xFF20FF20;
 
 
 	Rect2d bb(v1, v2, v3);
@@ -144,7 +145,7 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Colour triCo
 
 		for (int x = bb.min.x; x < bb.max.x; x++)
 		{
-			if ((unsigned)x < (unsigned)width && w1 >= 0 && w2 >= 0 && w3 >= 0)
+			if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0) // backface done here implicitly
 			{
 				pixels[baseIndex + x] = colour;
 			}

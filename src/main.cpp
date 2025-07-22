@@ -49,7 +49,7 @@ int main(int argc, char** args) {
 	mainScene.cams.emplace_back(); // Add a camera to mainScene
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 	mainScene.cams[0].pos.z -= 2;
-	mainScene.cams[0].rot.pitch += pi / 2;
+	//mainScene.cams[0].rot.pitch += pi / 2;
 
 	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj"));
 	mainScene.meshes[0].materials.emplace_back(0.5f, 1.0f, 0.5f);
@@ -72,9 +72,9 @@ int main(int argc, char** args) {
 			{
 				mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
 				float pitchDelta = (float)event.motion.yrel / 1000.0f;
-				pitchDelta = std::min(pitchDelta, camRot.pitch);
-				pitchDelta = std::max(pitchDelta, -(pi - camRot.pitch));
-				mainScene.cams[0].rot.pitch -= pitchDelta;
+				//pitchDelta = std::min(pitchDelta, camRot.pitch);
+				//pitchDelta = std::max(pitchDelta, -(pi - camRot.pitch));
+				mainScene.cams[0].rot.pitch += pitchDelta;
 			}
 		}
 
@@ -83,8 +83,8 @@ int main(int argc, char** args) {
 		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = 0.05f; }
 		else { freecamspeed = 0.01f; }
-		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
-		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos -= mainScene.cams[0].forward * freecamspeed; }
+		if (gk[SDL_SCANCODE_S]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
+		if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos += mainScene.cams[0].left * freecamspeed; }
 		if (gk[SDL_SCANCODE_D]) { mainScene.cams[0].pos -= mainScene.cams[0].left * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
