@@ -60,8 +60,10 @@ public:
 	Quaternion(); // 0 rotation
 	Quaternion(float angle, const Position3d& axis);// Use position3d vector as axis
 	Quaternion(double w_, double x_, double y_, double z_);
+
 	Quaternion operator*(const Quaternion& q) const;
 	Quaternion inverse() const;
+	void normalise();
 };
 
 class Camera
@@ -69,11 +71,13 @@ class Camera
 public:
 	Position3d pos;
 	Rotation3d rot;
+	Quaternion quatIdentity; // Stores the "identity" of the cam orientation, for base vecs
 
 	Position3d up;
 	Position3d right;
 	Position3d forward;
 
+	void rotateCam(float angle, const Position3d& axis);
 	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 };
 

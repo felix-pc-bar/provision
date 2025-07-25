@@ -60,28 +60,27 @@ int main(int argc, char** args) {
 	float freecamspeed;
 	int frame = 0;
 
-	Quaternion qDelta(pi / 100, { 0,1,0 });
-	mainScene.meshes[0].rotateQuat({ -pi / 4, 1, 0, 0 });
+	Quaternion qDelta(pi / 200, { 0,1,0 });
+	mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
 
 	while (true)
 	{
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
+		mainScene.cams[0].calcBaseVecs();
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT) {
 				return 0;  
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{
-				mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
-				float pitchDelta = (float)event.motion.yrel / 1000.0f;
+				//mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
+				mainScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
+				mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, {1,0,0});
 				//pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
 				//pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
-				mainScene.cams[0].rot.pitch += pitchDelta;
 			}
 		}
-
-		mainScene.cams[0].calcBaseVecs();
 
 		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = 0.05f; }
@@ -104,8 +103,7 @@ int main(int argc, char** args) {
 		vp.Present();
 		frame++;
 		vp.Clear(0xFF000000);
-		mainScene.meshes[0].rotateQuat(qDelta);
-		//mainScene.meshes[0].rotate({ 0.0f, 0.0f, 0.1f });
+		//mainScene.meshes[0].rotateQuat(qDelta);
 		//mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
 	}
 

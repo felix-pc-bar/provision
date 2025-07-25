@@ -126,6 +126,17 @@ Quaternion Quaternion::inverse() const
 	return { w, -x, -y, -z };
 }
 
+void Quaternion::normalise()
+{
+	float mag = sqrt(w * w + x * x + y * y + z * z);
+	if (mag == 0.0f) return; // Avoid division by zero
+
+	w /= mag;
+	x /= mag;
+	y /= mag;
+	z /= mag;
+}
+
 Position3d Position3d::cross(const Position3d& operand) const
 {
 	return Position3d(
@@ -163,33 +174,35 @@ Position3d Position3d::cameraspace() const
 	if (currentScene->currentCam != nullptr)
 	{
 		cs = *this - currentScene->currentCam->pos; // Set cameraspace position by subtracting camera pos from this pos
-		Rotation3d rot = currentScene->currentCam->rot;
+		//Rotation3d rot = currentScene->currentCam->rot;
 
-		float cy = cos(-rot.yaw); // yaw
-		float sy = sin(-rot.yaw);
-		float cp = cos(-rot.pitch); // pitch
-		float sp = sin(-rot.pitch);
-		float cr = cos(-rot.roll); // roll
-		float sr = sin(-rot.roll);
+		//float cy = cos(-rot.yaw); // yaw
+		//float sy = sin(-rot.yaw);
+		//float cp = cos(-rot.pitch); // pitch
+		//float sp = sin(-rot.pitch);
+		//float cr = cos(-rot.roll); // roll
+		//float sr = sin(-rot.roll);
 
-		// Apply Yaw (around Y), Pitch (X), then Roll (Z)
-		float x1 = cy * cs.x - sy * cs.z;
-		float z1 = sy * cs.x + cy * cs.z;
-		float y1 = cs.y;
+		//// Apply Yaw (around Y), Pitch (X), then Roll (Z)
+		//float x1 = cy * cs.x - sy * cs.z;
+		//float z1 = sy * cs.x + cy * cs.z;
+		//float y1 = cs.y;
 
-		float y2 = cp * y1 - sp * z1;
-		float z2 = sp * y1 + cp * z1;
-		float x2 = x1;
+		//float y2 = cp * y1 - sp * z1;
+		//float z2 = sp * y1 + cp * z1;
+		//float x2 = x1;
 
-		float x3 = cr * x2 - sr * y2;
-		float y3 = sr * x2 + cr * y2;
-		float z3 = z2;
-		cs = Position3d(x3, y3, z3);
+		//float x3 = cr * x2 - sr * y2;
+		//float y3 = sr * x2 + cr * y2;
+		//float z3 = z2;
+		//cs = Position3d(x3, y3, z3);
+		Quaternion camRotQ = currentScene->currentCam->quatIdentity.inverse();
+
+		cs.rotateQuat(camRotQ);
 	}
 	return cs;
 }
 
-//float Position3d::lengthSquared() const { return this->dot(*this); }
 float Position3d::lengthSquared() const {
 	return x * x + y * y + z * z; }
 
@@ -322,30 +335,43 @@ Rotation3d::Rotation3d(float x_, float y_, float z_)
 
 Camera* currentCam = nullptr;
 
+void Camera::rotateCam(float angle, const Position3d& axis)
+{
+	Quaternion qDelta(angle, axis);
+	this->quatIdentity = this->quatIdentity * qDelta;
+	this->quatIdentity.normalise();
+}
+
 void Camera::calcBaseVecs() 
 {
-	float cy = cos(this->rot.yaw);
-	float sy = sin(this->rot.yaw);
-	float cp = cos(this->rot.pitch);
-	float sp = sin(this->rot.pitch);
-	float cr = cos(rot.roll);
-	float sr = sin(rot.roll);
+	//float cy = cos(this->rot.yaw);
+	//float sy = sin(this->rot.yaw);
+	//float cp = cos(this->rot.pitch);
+	//float sp = sin(this->rot.pitch);
+	//float cr = cos(rot.roll);
+	//float sr = sin(rot.roll);
 
-	this->forward = {
-		-sy * cp,
-		-sp,
-		cp * cy
-	};
-	forward.normalise();
+	//this->forward = {
+	//	-sy * cp,
+	//	-sp,
+	//	cp * cy
+	//};
+	//forward.normalise();
 
-	const Position3d worldUp = { 0,1,0 };
-	this->right = worldUp.cross(forward);
-	this->right.normalise();
-	this->up = forward.cross(right);
-	cout << fmod(this->rot.pitch, pi * 2.0f) << endl;
-	if (fmod((this->rot.pitch), (2.0f * pi)) > pi) // WIP
-	{
-		up.flip();
-		right.flip();
-	}
+	//const Position3d worldUp = { 0,1,0 };
+	//this->right = worldUp.cross(forward);
+	//this->right.normalise();
+	//this->up = forward.cross(right);
+	//cout << fmod(this->rot.pitch, pi * 2.0f) << endl;
+	//if (fmod((this->rot.pitch), (2.0f * pi)) > pi) // WIP
+	//{
+	//	up.flip();
+	//	right.flip();
+	//}
+	this->forward = { 0,0,1 }; // World forward
+	this->forward.rotateQuat(this->quatIdentity);
+	this->up = { 0,1,0 }; // World up
+	this->up.rotateQuat(this->quatIdentity);
+	this->right = { 1,0,0 }; // World right
+	this->right.rotateQuat(this->quatIdentity);
 }
