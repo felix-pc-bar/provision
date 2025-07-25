@@ -7,6 +7,7 @@
 using std::vector, std::ostream;
 
 class Rotation3d;
+class Quaternion;
 
 class Position3d // Stores 3D positions ONLY. Nearly always as used as part of a bigger part (e.g. vert). Doubles as a vector.
 {
@@ -17,6 +18,7 @@ public:
 	Position3d();
 	Position3d cameraspace() const;
 	void rotateAroundPoint(const Rotation3d& rotation, const Position3d& pivot);
+	void rotateQuat(const Quaternion& q);
 
 	// Vector stuff
 	Position3d cross(const Position3d& operand) const;
@@ -49,6 +51,17 @@ public:
 	friend Rotation3d operator-(const Rotation3d& p1, const Rotation3d& p2);
 	friend Rotation3d operator*(const Rotation3d& p1, const Rotation3d& p2);
 	Rotation3d& operator+=(const Rotation3d& other);
+};
+
+class Quaternion // fml
+{
+public:
+	float w, x, y, z;
+	Quaternion(); // 0 rotation
+	Quaternion(float angle, const Position3d& axis);// Use position3d vector as axis
+	Quaternion(double w_, double x_, double y_, double z_);
+	Quaternion operator*(const Quaternion& q) const;
+	Quaternion inverse() const;
 };
 
 class Camera
@@ -110,7 +123,9 @@ public:
 	void setRotation(const Rotation3d& rot, const Position3d& pivot);
 	// pivoting by object origin (assumed)
 	void rotate(const Rotation3d& rot); 
-	void setRotation(const Rotation3d& rot); 
+	void setRotation(const Rotation3d& rot);
+
+	void rotateQuat(const Quaternion& q);
 
 	vector<Material> materials;
 	vector<int> matIndices; // Stores an index of materials corresponding to each tri

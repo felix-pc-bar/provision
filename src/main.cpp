@@ -60,6 +60,9 @@ int main(int argc, char** args) {
 	float freecamspeed;
 	int frame = 0;
 
+	Quaternion qDelta(pi / 100, { 0,1,0 });
+	mainScene.meshes[0].rotateQuat({ -pi / 4, 1, 0, 0 });
+
 	while (true)
 	{
 		Rotation3d& camRot = mainScene.cams[0].rot;
@@ -72,8 +75,8 @@ int main(int argc, char** args) {
 			{
 				mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
 				float pitchDelta = (float)event.motion.yrel / 1000.0f;
-				pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
-				pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
+				//pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
+				//pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
 				mainScene.cams[0].rot.pitch += pitchDelta;
 			}
 		}
@@ -101,6 +104,7 @@ int main(int argc, char** args) {
 		vp.Present();
 		frame++;
 		vp.Clear(0xFF000000);
+		mainScene.meshes[0].rotateQuat(qDelta);
 		//mainScene.meshes[0].rotate({ 0.0f, 0.0f, 0.1f });
 		//mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
 	}

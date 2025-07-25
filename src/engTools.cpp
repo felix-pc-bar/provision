@@ -89,6 +89,42 @@ void Position3d::rotateAroundPoint(const Rotation3d& rotation, const Position3d&
 	this->z = z2 + pivot.z;
 }
 
+void Position3d::rotateQuat(const Quaternion& q)
+{
+	Quaternion qv{ 0, x, y, z };
+	Quaternion result = q * qv * q.inverse();
+	this->x = result.x;
+	this->y = result.y;
+	this->z = result.z;
+}
+
+// QUATERNION (please work)
+Quaternion::Quaternion() : w(1), x(0), y(0), z(0) {}
+Quaternion::Quaternion(float angle, const Position3d& axis)
+{
+	float half = angle * 0.5f;
+	float s = sin(half);
+	w = cos(half);
+	x = axis.x * s;
+	y = axis.y * s;
+	z = axis.z * s;
+}
+
+Quaternion::Quaternion(double w_, double x_, double y_, double z_) : w(w_), x(x_), y(y_), z(z_) {}
+
+Quaternion Quaternion::operator*(const Quaternion& q) const {
+	return {
+		w * q.w - x * q.x - y * q.y - z * q.z,
+		w * q.x + x * q.w + y * q.z - z * q.y,
+		w * q.y - x * q.z + y * q.w + z * q.x,
+		w * q.z + x * q.y - y * q.x + z * q.w
+	};
+}
+
+Quaternion Quaternion::inverse() const
+{
+	return { w, -x, -y, -z };
+}
 
 Position3d Position3d::cross(const Position3d& operand) const
 {
@@ -267,6 +303,14 @@ void Mesh::setRotation(const Rotation3d& rot)
 	this->rotate(offset);
 }
 
+void Mesh::rotateQuat(const Quaternion& q)
+{
+	for (Vertex3d& vert : this->vertices)
+	{
+		vert.position.rotateQuat(q);
+	}
+}
+
 Rotation3d::Rotation3d() { pitch = 0; yaw = 0; roll = 0; }
 
 Rotation3d::Rotation3d(float x_, float y_, float z_)
@@ -284,6 +328,8 @@ void Camera::calcBaseVecs()
 	float sy = sin(this->rot.yaw);
 	float cp = cos(this->rot.pitch);
 	float sp = sin(this->rot.pitch);
+	float cr = cos(rot.roll);
+	float sr = sin(rot.roll);
 
 	this->forward = {
 		-sy * cp,
@@ -295,8 +341,11 @@ void Camera::calcBaseVecs()
 	const Position3d worldUp = { 0,1,0 };
 	this->right = worldUp.cross(forward);
 	this->right.normalise();
-
 	this->up = forward.cross(right);
-	//if (this->rot.pitch > pi / 2) { up.flip(); right.flip(); } // i hate it i hate it i hate it why why why why why y
-	forward.normalise();
+	cout << fmod(this->rot.pitch, pi * 2.0f) << endl;
+	if (fmod((this->rot.pitch), (2.0f * pi)) > pi) // WIP
+	{
+		up.flip();
+		right.flip();
+	}
 }
