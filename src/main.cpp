@@ -50,9 +50,10 @@ int main(int argc, char** args) {
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 	mainScene.cams[0].pos.z -= 2;
 	//mainScene.cams[0].rot.pitch += pi / 2;
-
-	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/barbershop/content/obj/ship1.obj"));
-	mainScene.meshes[0].materials.emplace_back(0.5f, 1.0f, 0.5f);
+	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/ship2.obj"));
+	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/plane.obj"));
+	mainScene.meshes[0].materials.emplace_back(0.5f, 0.5f, 0.6f);
+	mainScene.meshes[1].materials.emplace_back(0.2f, 0.2f, 0.1f);
 	
 	const Uint8* gk; 
 	SDL_Event event;
