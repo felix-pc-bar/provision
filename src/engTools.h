@@ -129,6 +129,7 @@ public:
 	void rotate(const Rotation3d& rot); 
 	void setRotation(const Rotation3d& rot);
 
+	void rotateAxis(float angle, const Position3d& axis);
 	void rotateQuat(const Quaternion& q);
 
 	vector<Material> materials;
@@ -136,7 +137,13 @@ public:
 
 	Position3d position;
 	Rotation3d rotation;
+	Quaternion quatIdentity;
 
+	Position3d up;
+	Position3d right;
+	Position3d forward;
+
+	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 };
 
 

@@ -67,7 +67,8 @@ void CPURenderer::drawScene(Scene& scene)
 			Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
 			Vertex3d& v2 = mesh.vertices[mesh.indices[i + 1]];
 			Vertex3d& v3 = mesh.vertices[mesh.indices[i + 2]];
-			Material mat = mesh.materials[mesh.matIndices[i / 3]];
+			//Material mat = mesh.materials[mesh.matIndices[i / 3]];
+			Material mat = mesh.materials[0];
 			triangles.emplace_back(v1, v2, v3, camPos, &mat);
 		}
 	}

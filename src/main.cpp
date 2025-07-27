@@ -51,7 +51,7 @@ int main(int argc, char** args) {
 	mainScene.cams[0].pos.z -= 2;
 	//mainScene.cams[0].rot.pitch += pi / 2;
 	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/ship2.obj"));
-	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/plane.obj"));
+	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/2.obj"));
 	mainScene.meshes[0].materials.emplace_back(0.5f, 0.5f, 0.6f);
 	mainScene.meshes[1].materials.emplace_back(0.2f, 0.2f, 0.1f);
 	
@@ -63,6 +63,7 @@ int main(int argc, char** args) {
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
+	mainScene.meshes[0].move({ 0,3,0 });
 
 	while (true)
 	{
@@ -76,8 +77,11 @@ int main(int argc, char** args) {
 			if (event.type == SDL_MOUSEMOTION)
 			{
 				//mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
-				mainScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
-				mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, {1,0,0});
+				//mainScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
+				//mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, {1,0,0});
+				mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, { 0,1,0 });
+				mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, {1,0,0});
+				mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity;
 				//pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
 				//pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
 			}
@@ -92,6 +96,11 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_A]) { mainScene.cams[0].pos -= mainScene.cams[0].right * freecamspeed; }
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
+		
+		mainScene.meshes[0].move(mainScene.meshes[0].forward * 0.02f);
+		Position3d camOffset(0, 1, -5);
+		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
+		mainScene.cams[0].pos = mainScene.meshes[0].position + camOffset;
 
 		//if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
 		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right

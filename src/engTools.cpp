@@ -324,6 +324,24 @@ void Mesh::rotateQuat(const Quaternion& q)
 	}
 }
 
+void Mesh::rotateAxis(float angle, const Position3d& axis)
+{
+	Quaternion qDelta(angle, axis);
+	this->quatIdentity = this->quatIdentity * qDelta;
+	this->quatIdentity.normalise();
+	this->rotateQuat({ angle, axis });
+}
+
+void Mesh::calcBaseVecs() // (re)calculate forward/right/up vectors
+{
+	this->forward = { 0,0,1 }; // World forward
+	this->forward.rotateQuat(this->quatIdentity);
+	this->up = { 0,1,0 }; // World up
+	this->up.rotateQuat(this->quatIdentity);
+	this->right = { 1,0,0 }; // World right
+	this->right.rotateQuat(this->quatIdentity);
+}
+
 Rotation3d::Rotation3d() { pitch = 0; yaw = 0; roll = 0; }
 
 Rotation3d::Rotation3d(float x_, float y_, float z_)
