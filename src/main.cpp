@@ -51,7 +51,7 @@ int main(int argc, char** args) {
 	mainScene.cams[0].pos.z -= 2;
 	//mainScene.cams[0].rot.pitch += pi / 2;
 
-	mainScene.meshes.emplace_back(importObj("F:/Creative raw/repos/barbershop/content/obj/suzanne.obj"));
+	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/barbershop/content/obj/suzanne.obj"));
 	mainScene.meshes[0].materials.emplace_back(0.5f, 1.0f, 0.5f);
 	
 	const Uint8* gk; 
