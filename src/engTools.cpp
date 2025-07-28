@@ -318,9 +318,12 @@ void Mesh::setRotation(const Rotation3d& rot)
 
 void Mesh::rotateQuat(const Quaternion& q)
 {
+	Position3d center = this->position;
 	for (Vertex3d& vert : this->vertices)
 	{
-		vert.position.rotateQuat(q);
+		Position3d relPos = vert.position - center;
+		relPos.rotateQuat(q);
+		vert.position = relPos + center;
 	}
 }
 

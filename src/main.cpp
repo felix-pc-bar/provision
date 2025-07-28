@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include <cmath>
+#include <filesystem>
 #include "render/CPURenderer.h"
 #include "import3d.h"
 #include "engconfig.h"
@@ -10,7 +11,7 @@
 using std::endl, std::cout;
 
 int main(int argc, char** args) {
-
+	cout << std::filesystem::current_path() << endl;
 	// Pointers to our window and surface
 	SDL_Surface* winSurface = NULL;
 	SDL_Window* window = NULL;
@@ -50,10 +51,10 @@ int main(int argc, char** args) {
 	mainScene.currentCam = &mainScene.cams[0]; // Set mainScene's current camera to the camera we just created
 	mainScene.cams[0].pos.z -= 2;
 	//mainScene.cams[0].rot.pitch += pi / 2;
-	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/ship2.obj"));
-	mainScene.meshes.emplace_back(importObj("C:/Users/SUCodes/Source/Repos/raceCondition/content/obj/2.obj"));
-	mainScene.meshes[0].materials.emplace_back(0.5f, 0.5f, 0.6f);
-	mainScene.meshes[1].materials.emplace_back(0.2f, 0.2f, 0.1f);
+	mainScene.meshes.emplace_back(importObj("content/obj/ship2.obj"));
+	mainScene.meshes.emplace_back(importObj("content/obj/terrain.obj"));
+	mainScene.meshes[0].materials.emplace_back(0.8f, 0.8f, 0.9f);
+	mainScene.meshes[1].materials.emplace_back(0.4f, 0.4f, 0.2f);
 	
 	const Uint8* gk; 
 	SDL_Event event;
@@ -97,16 +98,11 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 		
-		mainScene.meshes[0].move(mainScene.meshes[0].forward * 0.02f);
+		mainScene.meshes[0].calcBaseVecs();
+		mainScene.meshes[0].move(mainScene.meshes[0].forward * 0.05f);
 		Position3d camOffset(0, 1, -5);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
 		mainScene.cams[0].pos = mainScene.meshes[0].position + camOffset;
-
-		//if (gk[SDL_SCANCODE_J]) mainScene.cams[0].rot.yaw += 0.05f; // yaw left
-		//if (gk[SDL_SCANCODE_L]) mainScene.cams[0].rot.yaw -= 0.05f; // yaw right
-		//if (gk[SDL_SCANCODE_I] && camRot.pitch <  pi - 0.05f) mainScene.cams[0].rot.pitch += 0.05f; // pitch up
-		//if (gk[SDL_SCANCODE_K] && camRot.pitch > 0.05f) mainScene.cams[0].rot.pitch -= 0.05f; // pitch down
-
 
 		//cout << mainScene.meshes[0].position.cameraspace() << endl;
 		vp.drawScene(*currentScene);
