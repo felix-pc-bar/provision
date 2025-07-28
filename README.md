@@ -1,2 +1,2 @@
 # Race Condition
-Basic 3D engine
+Retro game, made with [Barbershop](https://github.com/felix-pc-bar/barbershop)
