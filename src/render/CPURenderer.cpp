@@ -117,7 +117,8 @@ void CPURenderer::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Colour triCo
 	viewDir.normalise();
 
 	float dot = normal.dot(lightNormal);
-	float value = 0.5f * dot + 0.5f;
+	float value = 0.5f * dot + 0.75f;
+	value = std::min(value, 1.0f);
 	triCol *= value;
 	uint32_t colour = triCol.raw();
 	//uint32_t colour = 0xFF20FF20;
