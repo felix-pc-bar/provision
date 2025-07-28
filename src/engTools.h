@@ -120,6 +120,8 @@ public:
 	void addVertex(Position3d pos);
 	void addFace(vector<int> &ind);
 
+	void instanceOnMesh(Mesh& instancer); //Duplicate this mesh on every vertex of the instancer (permanent)
+
 	void move(Position3d offset); 
 	void setPos(Position3d pos);
 

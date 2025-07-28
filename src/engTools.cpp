@@ -227,6 +227,22 @@ Mesh::Mesh() {
 	//indices = { 0, 1, 2 };
 }
 
+//void Mesh::instanceOnMesh(Mesh& instancer)
+//{
+//	int numVerts = this->vertices.size();
+//	for (Vertex3d iV : instancer.vertices)
+//	{
+//		for (Vertex3d sV : this->vertices)
+//		{
+//			this->addVertex(sV.position + iV.position);
+//		}
+//	}
+//	// Add face indices
+//	vector<int> tmpInds = this->indices;
+//	for (int& i : tmpInds) { i += numVerts; }
+//	this->indices.insert(this->indices.end(), tmpInds.begin(), tmpInds.end());
+//}
+
 void Mesh::addVertex(Position3d pos)
 {
 	vertices.emplace_back(Vertex3d{pos});

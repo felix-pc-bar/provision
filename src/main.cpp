@@ -55,7 +55,7 @@ int main(int argc, char** args) {
 	mainScene.meshes[0].materials.emplace_back(0.8f, 0.8f, 0.9f);
 	mainScene.meshes.emplace_back(importObj("content/obj/terrain2.obj"));
 	mainScene.meshes[1].materials.emplace_back(1.0f, 0.7f, 0.5f);
-	mainScene.meshes.emplace_back(importObj("content/obj/cactus.obj"));
+	mainScene.meshes.emplace_back(importObj("content/obj/cacti.obj"));
 	mainScene.meshes[2].materials.emplace_back(0.25f, 0.95f, 0.3f);
 	
 	const Uint8* gk; 
@@ -90,7 +90,7 @@ int main(int argc, char** args) {
 		gk = SDL_GetKeyboardState(NULL); 
 		//if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
 		
-		mainScene.meshes[0].move(mainScene.meshes[0].forward * 0.05f);
+		mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f);
 		Position3d camOffset(0, 2, -5);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
 		mainScene.cams[0].pos = mainScene.meshes[0].position + camOffset;
