@@ -68,6 +68,7 @@ int main(int argc, char** args) {
 
 	while (true)
 	{
+		mainScene.meshes[0].calcBaseVecs();
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
@@ -77,14 +78,10 @@ int main(int argc, char** args) {
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{
-				//mainScene.cams[0].rot.yaw -= (float) event.motion.xrel / 1000.0f;
-				//mainScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
-				//mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, {1,0,0});
-				mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, { 0,1,0 });
-				mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, {1,0,0});
-				mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity;
-				//pitchDelta = std::min(pitchDelta, (pi / 2.0f) - camRot.pitch);
-				//pitchDelta = std::max(pitchDelta, (-pi / 2.0f) - camRot.pitch);
+				mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, mainScene.meshes[0].up);
+				mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, mainScene.meshes[0].right);
+				Quaternion camLookOffset(0, { 0, 1, 0 }); // no rotation, or maybe slight pitch down if needed
+				mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 			}
 		}
 
@@ -98,7 +95,6 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 		if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 		
-		mainScene.meshes[0].calcBaseVecs();
 		mainScene.meshes[0].move(mainScene.meshes[0].forward * 0.05f);
 		Position3d camOffset(0, 1, -5);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
@@ -109,8 +105,6 @@ int main(int argc, char** args) {
 		vp.Present();
 		frame++;
 		vp.Clear(0xFF000000);
-		//mainScene.meshes[0].rotateQuat(qDelta);
-		//mainScene.meshes[0].setPos({ 0.0f, 0.0f, sin((float) frame / 10) });
 	}
 
 	system("pause");
