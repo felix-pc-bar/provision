@@ -261,6 +261,7 @@ void Mesh::move(Position3d offset)
 		vert.offsetPosition(offset);
 	}
 	this->position += offset;
+	for (Mesh* m : children) { m->move(offset); }
 }
 
 void Mesh::setPos(Position3d pos)

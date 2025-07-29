@@ -58,6 +58,22 @@ int main(int argc, char** args) {
 	mainScene.meshes.emplace_back(importObj("content/obj/cacti.obj"));
 	mainScene.meshes[2].materials.emplace_back(0.25f, 0.95f, 0.3f);
 	
+
+	mainScene.meshes.emplace_back(importObj("content/obj/raven_body.obj"));
+	mainScene.meshes[3].materials.emplace_back(0.15f, 0.15f, 0.15f);
+	mainScene.meshes.emplace_back(importObj("content/obj/raven_legs.obj"));
+	mainScene.meshes[4].move({0.925, -0.61, 0});
+	mainScene.meshes[4].materials.emplace_back(0.15f, 0.15f, 0.15f);
+	mainScene.meshes[3].children.emplace_back(&mainScene.meshes[4]);
+	mainScene.meshes.emplace_back(importObj("content/obj/raven_wing_l.obj"));
+	mainScene.meshes[5].move({0.034, 0.78, -0.59});
+	mainScene.meshes[5].materials.emplace_back(0.15f, 0.15f, 0.15f);
+	mainScene.meshes[3].children.emplace_back(&mainScene.meshes[5]);
+	mainScene.meshes.emplace_back(importObj("content/obj/raven_wing_r.obj"));
+	mainScene.meshes[6].move({0.034, 0.78, 0.59});
+	mainScene.meshes[6].materials.emplace_back(0.15f, 0.15f, 0.15f);
+	mainScene.meshes[3].children.emplace_back(&mainScene.meshes[6]);
+
 	const Uint8* gk; 
 	SDL_Event event;
 
@@ -88,9 +104,9 @@ int main(int argc, char** args) {
 		}
 
 		gk = SDL_GetKeyboardState(NULL); 
-		//if (gk[SDL_SCANCODE_W]) { mainScene.cams[0].pos += mainScene.cams[0].forward * freecamspeed; }
+		if (gk[SDL_SCANCODE_W]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f); }
+		if (gk[SDL_SCANCODE_S]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * -1.0f); }
 		
-		mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f);
 		Position3d camOffset(0, 2, -5);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
 		mainScene.cams[0].pos = mainScene.meshes[0].position + camOffset;
