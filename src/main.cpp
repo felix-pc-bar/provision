@@ -57,7 +57,6 @@ int main(int argc, char** args) {
 	mainScene.meshes[1].materials.emplace_back(1.0f, 0.7f, 0.5f);
 	mainScene.meshes.emplace_back(importObj("content/obj/cacti.obj"));
 	mainScene.meshes[2].materials.emplace_back(0.25f, 0.95f, 0.3f);
-	
 
 	mainScene.meshes.emplace_back(importObj("content/obj/raven_body.obj"));
 	mainScene.meshes[3].materials.emplace_back(0.15f, 0.15f, 0.15f);
@@ -81,12 +80,12 @@ int main(int argc, char** args) {
 	int frame = 0;
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
-	mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
-	mainScene.meshes[0].move({ -100,10,0 });
+	mainScene.meshes[3].rotateQuat({ -pi / 4, -1, 0, 0 });
+	mainScene.meshes[3].move({ -100,10,0 });
 
 	while (true)
 	{
-		mainScene.meshes[0].calcBaseVecs();
+		mainScene.meshes[3].calcBaseVecs();
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
@@ -96,16 +95,16 @@ int main(int argc, char** args) {
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{
-				mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, mainScene.meshes[0].up);
-				mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, mainScene.meshes[0].right);
+				mainScene.meshes[3].rotateAxis((float)event.motion.xrel / 1000.0f, mainScene.meshes[3].up);
+				mainScene.meshes[3].rotateAxis((float)event.motion.yrel / 1000.0f, mainScene.meshes[3].right);
 				Quaternion camLookOffset(0, { 0, 1, 0 }); // no rotation, or maybe slight pitch down if needed
-				mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
+				mainScene.cams[3].quatIdentity = mainScene.meshes[3].quatIdentity * camLookOffset;
 			}
 		}
 
 		gk = SDL_GetKeyboardState(NULL); 
-		if (gk[SDL_SCANCODE_W]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f); }
-		if (gk[SDL_SCANCODE_S]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * -1.0f); }
+		if (gk[SDL_SCANCODE_W]) { mainScene.meshes[3].move(mainScene.meshes[3].forward * 1.0f); }
+		if (gk[SDL_SCANCODE_S]) { mainScene.meshes[3].move(mainScene.meshes[3].forward * -1.0f); }
 		
 		Position3d camOffset(0, 2, -5);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
