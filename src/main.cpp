@@ -111,7 +111,7 @@ int main(int argc, char** args) {
 
 		//if (gk[SDL_SCANCODE_A] && mainScene.meshes[0].quatIdentity) {}
 
-		flightSpeed = std::max(std::min(4.0l, (75.0f - mainScene.meshes[0].position.y) / 40.0l), 1.0l);
+		flightSpeed = std::max(std::min(2.0l, (75.0f - mainScene.meshes[0].position.y) / 80.0l), 1.0l);
 		mainScene.meshes[0].move(mainScene.meshes[0].forward * flightSpeed);
 		
 		Position3d camOffset(0, 4, -10);
