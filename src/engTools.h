@@ -38,7 +38,10 @@ public:
 	Position3d& operator+=(const Position3d& other);
 	Position3d& operator-=(const Position3d& other);
 
+
 	friend bool operator==(const Position3d& p1, const Position3d& p2);
+	friend bool operator<(const Position3d& p1, const Position3d& p2);
+	friend bool operator>(const Position3d& p1, const Position3d& p2);
 };
 
 class Rotation3d
@@ -111,6 +114,19 @@ public:
 	Colour colour;
 };
 
+class Mesh;
+
+class bb3d // 3D bounding box
+{
+public:
+	bb3d();
+	bb3d(Position3d p1_, Position3d p2_);
+
+	bool containsMesh(Mesh m) const;
+	
+	Position3d p1, p2;
+};
+
 class Mesh
 {
 public:
@@ -136,6 +152,7 @@ public:
 	void rotateAxis(float angle, const Position3d& axis);
 	void rotateQuat(const Quaternion& q);
 
+	void setRotationQuat(const Quaternion& q);
 	vector<Material> materials;
 	vector<int> matIndices; // Stores an index of materials corresponding to each tri
 

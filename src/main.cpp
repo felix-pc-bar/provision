@@ -43,6 +43,7 @@ int main(int argc, char** args) {
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
+	vp.Clear(0xFF5792FF); // sky blue
 
 	Scene mainScene; //Create main scene
 	currentScene = &mainScene; // Set the current scene to mainScene
@@ -73,9 +74,13 @@ int main(int argc, char** args) {
 	Quaternion camLookOffset(0.2f, { 1, 0, 0 }); // no rotation, or maybe slight pitch down if needed
 	mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 
+	float flightSpeed = 0;
+
+	bb3d testbb({ -10, -100, -10 }, { 10, 100, 10 });
+
 	while (true)
 	{
-		mainScene.meshes[3].calcBaseVecs();
+		mainScene.meshes[0].calcBaseVecs();
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
@@ -85,15 +90,26 @@ int main(int argc, char** args) {
 			}
 			if (event.type == SDL_MOUSEMOTION)
 			{
-				mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, mainScene.meshes[0].up);
-				mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, mainScene.meshes[0].right);
+				//mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, mainScene.meshes[0].up);
+				//mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, mainScene.meshes[0].right);
 				mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 			}
 		}
 
 		gk = SDL_GetKeyboardState(NULL); 
-		if (gk[SDL_SCANCODE_W]) { mainScene.meshes[3].move(mainScene.meshes[3].forward * 1.0f); }
-		if (gk[SDL_SCANCODE_S]) { mainScene.meshes[3].move(mainScene.meshes[3].forward * -1.0f); }
+		//if (gk[SDL_SCANCODE_W]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f); }
+		if (gk[SDL_SCANCODE_A]) {	mainScene.meshes[0].rotateAxis(0.03, {mainScene.meshes[0].forward}); }
+		if (gk[SDL_SCANCODE_D]) {	mainScene.meshes[0].rotateAxis(-0.03, {mainScene.meshes[0].forward}); }
+		if (gk[SDL_SCANCODE_S]) {	mainScene.meshes[0].rotateAxis(-0.03, {mainScene.meshes[0].right}); }
+		if (gk[SDL_SCANCODE_W]) {	mainScene.meshes[0].rotateAxis(0.03, {mainScene.meshes[0].right}); }
+
+
+		mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
+
+		//if (gk[SDL_SCANCODE_A] && mainScene.meshes[0].quatIdentity) {}
+
+		flightSpeed = std::min(4.0l, (50.0f - mainScene.meshes[0].position.y) / 40.0l);
+		mainScene.meshes[0].move(mainScene.meshes[0].forward * flightSpeed);
 		
 		Position3d camOffset(0, 4, -10);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
@@ -102,7 +118,7 @@ int main(int argc, char** args) {
 		vp.drawScene(*currentScene);
 		vp.Present();
 		frame++;
-		vp.Clear(0xFF5792FF);
+		vp.Clear(0xFF5792FF); // sky blue
 	}
 
 	system("pause");

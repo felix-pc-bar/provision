@@ -18,6 +18,8 @@ Position3d operator*(const Position3d& p1, const Position3d& p2) { return Positi
 Position3d operator*(const Position3d& p1, const float mpcand) { return Position3d(p1.x * mpcand, p1.y * mpcand, p1.z * mpcand); }
 Position3d operator/(const Position3d& p1, const float div) { return Position3d(p1.x / div, p1.y / div, p1.z / div); }
 bool operator==(const Position3d& p1, const Position3d& p2) { return (p1.x == p2.x && p1.y == p2.y && p1.z == p2.z) ? true : false; }
+bool operator<(const Position3d& p1, const Position3d& p2) { return (p1.x < p2.x && p1.y < p2.y && p1.z < p2.z) ? true : false; }
+bool operator>(const Position3d& p1, const Position3d& p2) { return (p1.x > p2.x && p1.y > p2.y && p1.z > p2.z) ? true : false; }
 
 Position3d& Position3d::operator+=(const Position3d& other) {
 	x += other.x;
@@ -330,6 +332,11 @@ void Mesh::rotateAxis(float angle, const Position3d& axis)
 	this->rotateQuat({ angle, axis });
 }
 
+void Mesh::setRotationQuat(const Quaternion& qTarget) {
+	Quaternion qDelta = qTarget * this->quatIdentity.inverse();
+	this->rotateQuat(qDelta);
+}
+
 void Mesh::calcBaseVecs() // (re)calculate forward/right/up vectors
 {
 	this->forward = { 0,0,1 }; // World forward
@@ -347,6 +354,25 @@ Rotation3d::Rotation3d(float x_, float y_, float z_)
 	this->pitch = x_;
 	this->yaw = y_;
 	this->roll = z_;
+}
+
+bb3d::bb3d() : p1(), p2() {}
+
+bb3d::bb3d(Position3d p1_, Position3d p2_) : p1(p1_), p2(p2_) {}
+
+bool bb3d::containsMesh(Mesh m) const
+{
+	Position3d p = m.position;
+	float minX = std::min(p1.x, p2.x);
+	float maxX = std::max(p1.x, p2.x);
+	float minY = std::min(p1.y, p2.y);
+	float maxY = std::max(p1.y, p2.y);
+	float minZ = std::min(p1.z, p2.z);
+	float maxZ = std::max(p1.z, p2.z);
+
+	return (p.x >= minX && p.x <= maxX) &&
+		(p.y >= minY && p.y <= maxY) &&
+		(p.z >= minZ && p.z <= maxZ);
 }
 
 Camera* currentCam = nullptr;
