@@ -105,12 +105,14 @@ public:
 	float red;
 	float green;
 	float blue;
+	float alpha;
 };
 class Material
 {
 public:
 	Material();
 	Material(float r, float g, float b);
+	Material(float r, float g, float b, float a);
 	Colour colour;
 };
 

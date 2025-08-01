@@ -202,6 +202,15 @@ Material::Material(float r, float g, float b)
 	this->colour.green = g;
 	this->colour.blue = b;
 }
+
+Material::Material(float r, float g, float b, float a)
+{
+	this->colour.red = r;
+	this->colour.green = g;
+	this->colour.blue = b;
+	this->colour.alpha = a;
+}
+
 Colour::Colour(float r, float g, float b) : red(r), green(g), blue(b) {}
 
 Colour::Colour() : red(1), green(1), blue(1) {}
@@ -215,7 +224,7 @@ Colour& Colour::operator*=(const float val)
 }
 uint32_t Colour::raw()
 {
-	return	(0xFF << 24) |
+	return	((uint32_t)(0xFF * this->alpha) << 24) |
 			((uint32_t)(0xFF * this->red) << 16) |
 			((uint32_t)(0xFF * this->green) << 8)|
 			((uint32_t)(0xFF * this->blue));

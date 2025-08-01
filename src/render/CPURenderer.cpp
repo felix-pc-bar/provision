@@ -35,8 +35,42 @@ void CPURenderer::Clear(uint32_t color)
 inline void CPURenderer::SetPixel(int x, int y, uint32_t color)
 {
 	int screenY = screenheight - y;
-	if ((unsigned)x < (unsigned)width && (unsigned)screenY < (unsigned)height)
-		pixelBuffer[screenY * width + x] = color;
+	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)
+		return;
+
+	uint32_t& dest = pixelBuffer[screenY * width + x];
+
+	uint8_t srcA = color >> 24;
+	if (srcA == 255) {
+		// Fully opaque: just write
+		dest = color;
+		return;
+	}
+	if (srcA == 0) {
+		// Fully transparent: do nothing
+		return;
+	}
+	cout << "transparent" << endl;
+	// Extract source color components
+	uint8_t srcR = (color >> 16) & 0xFF;
+	uint8_t srcG = (color >> 8) & 0xFF;
+	uint8_t srcB = color & 0xFF;
+
+	// Extract destination color components
+	uint8_t dstR = (dest >> 16) & 0xFF;
+	uint8_t dstG = (dest >> 8) & 0xFF;
+	uint8_t dstB = dest & 0xFF;
+
+	// Blend (non-premultiplied alpha)
+	uint8_t outR = (srcR * srcA + dstR * (255 - srcA)) / 255;
+	uint8_t outG = (srcG * srcA + dstG * (255 - srcA)) / 255;
+	uint8_t outB = (srcB * srcA + dstB * (255 - srcA)) / 255;
+
+	// Optionally blend alpha too — here we just preserve max of src/dst
+	uint8_t outA = std::max(srcA, (uint8_t)(dest >> 24));
+
+	// Repack
+	dest = (outA << 24) | (outR << 16) | (outG << 8) | outB;
 }
 
 void CPURenderer::drawMesh(Mesh& mesh) 
@@ -73,7 +107,6 @@ void CPURenderer::drawScene(Scene& scene)
 		}
 	}
 
-	// Depth occlusion is dodgy (I'm ignoring it)
 	std::sort(triangles.begin(), triangles.end(),
 		[](const TriangleToRender& a, const TriangleToRender& b) {
 			return a.distanceToCamera > b.distanceToCamera;

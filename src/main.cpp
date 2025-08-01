@@ -35,7 +35,7 @@ int main(int argc, char** args) {
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 		return 1;
 	}
-	SDL_SetWindowTitle(window, "Barbershop");
+	SDL_SetWindowTitle(window, "Provision");
 	
 	// Init
 	// Lock the mouse to the window and hide the cursor
@@ -58,6 +58,8 @@ int main(int argc, char** args) {
 	mainScene.meshes[1].materials.emplace_back(1.0f, 0.7f, 0.5f);
 	mainScene.meshes.emplace_back(importObj("content/obj/cacti.obj"));
 	mainScene.meshes[2].materials.emplace_back(0.25f, 0.95f, 0.3f);
+	mainScene.meshes.emplace_back(importObj("content/obj/rays.obj"));
+	mainScene.meshes[3].materials.emplace_back(0.33f, 0.6f, 1.0f);
 
 	const Uint8* gk; 
 	SDL_Event event;
@@ -92,7 +94,7 @@ int main(int argc, char** args) {
 			{
 				//mainScene.meshes[0].rotateAxis((float)event.motion.xrel / 1000.0f, mainScene.meshes[0].up);
 				//mainScene.meshes[0].rotateAxis((float)event.motion.yrel / 1000.0f, mainScene.meshes[0].right);
-				mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
+				//mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 			}
 		}
 
@@ -102,13 +104,14 @@ int main(int argc, char** args) {
 		if (gk[SDL_SCANCODE_D]) {	mainScene.meshes[0].rotateAxis(-0.03, {mainScene.meshes[0].forward}); }
 		if (gk[SDL_SCANCODE_S]) {	mainScene.meshes[0].rotateAxis(-0.03, {mainScene.meshes[0].right}); }
 		if (gk[SDL_SCANCODE_W]) {	mainScene.meshes[0].rotateAxis(0.03, {mainScene.meshes[0].right}); }
+		if (gk[SDL_SCANCODE_SPACE]) {	mainScene.meshes[0].rotateAxis(0.03, {mainScene.meshes[0].right}); }
 
 
 		mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 
 		//if (gk[SDL_SCANCODE_A] && mainScene.meshes[0].quatIdentity) {}
 
-		flightSpeed = std::min(4.0l, (50.0f - mainScene.meshes[0].position.y) / 40.0l);
+		flightSpeed = std::max(std::min(4.0l, (75.0f - mainScene.meshes[0].position.y) / 40.0l), 1.0l);
 		mainScene.meshes[0].move(mainScene.meshes[0].forward * flightSpeed);
 		
 		Position3d camOffset(0, 4, -10);
