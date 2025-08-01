@@ -97,7 +97,6 @@ int main(int argc, char** args) {
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
 		mainScene.cams[0].pos = mainScene.meshes[0].position + camOffset;
 
-		//cout << mainScene.meshes[0].position.cameraspace() << endl;
 		vp.drawScene(*currentScene);
 		vp.Present();
 		frame++;
