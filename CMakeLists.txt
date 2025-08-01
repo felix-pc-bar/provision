@@ -25,7 +25,7 @@ add_executable(provision
 )
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(provision PROPERTIES
-    LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+    LINK_FLAGS "/SUBSYSTEM:WINDOWS"
 )
 
 target_link_libraries(provision SDL2main SDL2)
