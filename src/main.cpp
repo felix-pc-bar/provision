@@ -60,6 +60,8 @@ int main(int argc, char** args) {
 	mainScene.meshes[2].materials.emplace_back(0.25f, 0.95f, 0.3f);
 	mainScene.meshes.emplace_back(importObj("content/obj/fRocks.obj"));
 	mainScene.meshes[3].materials.emplace_back(0.33f, 0.33f, 0.33f);
+	mainScene.meshes.emplace_back(importObj("content/obj/credit.obj"));
+	mainScene.meshes[4].materials.emplace_back(0.8f, 0.8f, 0.5f);
 
 	const Uint8* gk; 
 	SDL_Event event;
@@ -70,13 +72,13 @@ int main(int argc, char** args) {
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 
 	//mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
-	mainScene.meshes[0].move({ -100,10,0 });
+	mainScene.meshes[0].move({ -100,40,0 });
 
 
 	Quaternion camLookOffset(0.2f, { 1, 0, 0 }); // no rotation, or maybe slight pitch down if needed
 	mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 
-	float flightSpeed = 1;
+	float flightSpeed = 0.2f;
 
 	bb3d testbb({ -10, -100, -10 }, { 10, 100, 10 });
 
@@ -100,10 +102,10 @@ int main(int argc, char** args) {
 
 		gk = SDL_GetKeyboardState(NULL); 
 		//if (gk[SDL_SCANCODE_W]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f); }
-		if (gk[SDL_SCANCODE_A]) {	mainScene.meshes[0].rotateAxis(0.03, {mainScene.meshes[0].forward}); }
-		if (gk[SDL_SCANCODE_D]) {	mainScene.meshes[0].rotateAxis(-0.03, {mainScene.meshes[0].forward}); }
-		if (gk[SDL_SCANCODE_S]) {	mainScene.meshes[0].rotateAxis(-0.03, {mainScene.meshes[0].right}); }
-		if (gk[SDL_SCANCODE_W]) {	mainScene.meshes[0].rotateAxis(0.03, {mainScene.meshes[0].right}); }
+		if (gk[SDL_SCANCODE_A]) {	mainScene.meshes[0].rotateAxis(0.02, {mainScene.meshes[0].forward}); }
+		if (gk[SDL_SCANCODE_D]) {	mainScene.meshes[0].rotateAxis(-0.02, {mainScene.meshes[0].forward}); }
+		if (gk[SDL_SCANCODE_S]) {	mainScene.meshes[0].rotateAxis(-0.02, {mainScene.meshes[0].right}); }
+		if (gk[SDL_SCANCODE_W]) {	mainScene.meshes[0].rotateAxis(0.02, {mainScene.meshes[0].right}); }
 		if (gk[SDL_SCANCODE_LSHIFT]) { flightSpeed += 0.01f; }
 		if (gk[SDL_SCANCODE_LCTRL] && flightSpeed > 0.01f) { flightSpeed -= 0.01f; }
 	
