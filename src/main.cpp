@@ -65,15 +65,17 @@ int main(int argc, char** args) {
 	int frame = 0;
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
+
 	//mainScene.meshes[0].rotateQuat({ -pi / 4, -1, 0, 0 });
 	mainScene.meshes[0].move({ -100,10,0 });
+
 
 	Quaternion camLookOffset(0.2f, { 1, 0, 0 }); // no rotation, or maybe slight pitch down if needed
 	mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 
 	while (true)
 	{
-		mainScene.meshes[0].calcBaseVecs();
+		mainScene.meshes[3].calcBaseVecs();
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
@@ -90,8 +92,8 @@ int main(int argc, char** args) {
 		}
 
 		gk = SDL_GetKeyboardState(NULL); 
-		if (gk[SDL_SCANCODE_W]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f); }
-		if (gk[SDL_SCANCODE_S]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * -1.0f); }
+		if (gk[SDL_SCANCODE_W]) { mainScene.meshes[3].move(mainScene.meshes[3].forward * 1.0f); }
+		if (gk[SDL_SCANCODE_S]) { mainScene.meshes[3].move(mainScene.meshes[3].forward * -1.0f); }
 		
 		Position3d camOffset(0, 4, -10);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
