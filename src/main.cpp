@@ -79,6 +79,8 @@ int main(int argc, char** args) {
 	mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 
 	float flightSpeed = 0.2f;
+	float turnSpeed = 0.02f;
+	float roll = 0.0f;
 
 	bb3d testbb({ -10, -100, -10 }, { 10, 100, 10 });
 
@@ -102,10 +104,19 @@ int main(int argc, char** args) {
 
 		gk = SDL_GetKeyboardState(NULL); 
 		//if (gk[SDL_SCANCODE_W]) { mainScene.meshes[0].move(mainScene.meshes[0].forward * 1.0f); }
-		if (gk[SDL_SCANCODE_A]) {	mainScene.meshes[0].rotateAxis(0.02, {mainScene.meshes[0].forward}); }
-		if (gk[SDL_SCANCODE_D]) {	mainScene.meshes[0].rotateAxis(-0.02, {mainScene.meshes[0].forward}); }
-		if (gk[SDL_SCANCODE_S]) {	mainScene.meshes[0].rotateAxis(-0.02, {mainScene.meshes[0].right}); }
-		if (gk[SDL_SCANCODE_W]) {	mainScene.meshes[0].rotateAxis(0.02, {mainScene.meshes[0].right}); }
+		if (gk[SDL_SCANCODE_A]) 
+		{
+			if (roll <= 0.32f) { mainScene.meshes[0].rotateAxis(turnSpeed, { mainScene.meshes[0].forward }); roll += turnSpeed; }
+		}
+		if (gk[SDL_SCANCODE_D]) 
+		{
+			if (roll >= -0.32f) { mainScene.meshes[0].rotateAxis(-turnSpeed, { mainScene.meshes[0].forward }); roll -= turnSpeed; }
+		}
+		
+		mainScene.meshes[0].rotateAxis(roll / -30.0f, { 0, 1, 0 }); 
+
+		if (gk[SDL_SCANCODE_S]) {	mainScene.meshes[0].rotateAxis(-turnSpeed, {mainScene.meshes[0].right}); }
+		if (gk[SDL_SCANCODE_W]) {	mainScene.meshes[0].rotateAxis(turnSpeed, {mainScene.meshes[0].right}); }
 		if (gk[SDL_SCANCODE_LSHIFT]) { flightSpeed += 0.01f; }
 		if (gk[SDL_SCANCODE_LCTRL] && flightSpeed > 0.01f) { flightSpeed -= 0.01f; }
 	
