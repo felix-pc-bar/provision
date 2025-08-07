@@ -62,6 +62,8 @@ int main(int argc, char** args) {
 	mainScene.meshes[3].materials.emplace_back(0.33f, 0.33f, 0.33f);
 	mainScene.meshes.emplace_back(importObj("content/obj/credit.obj"));
 	mainScene.meshes[4].materials.emplace_back(0.8f, 0.8f, 0.5f);
+	mainScene.meshes.emplace_back(importObj("content/obj/godray.obj"));
+	mainScene.meshes[5].materials.emplace_back(1.0f, 1.0f, 1.0f);
 
 	const Uint8* gk; 
 	SDL_Event event;
@@ -91,8 +93,9 @@ int main(int argc, char** args) {
 		Rotation3d& camRot = mainScene.cams[0].rot;
 		// Handle inputs
 		mainScene.cams[0].calcBaseVecs();
+		gk = SDL_GetKeyboardState(NULL); 
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_QUIT) {
+			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
 				return 0;  
 			}
 			if (event.type == SDL_MOUSEMOTION)
@@ -103,7 +106,6 @@ int main(int argc, char** args) {
 			}
 		}
 
-		gk = SDL_GetKeyboardState(NULL); 
 		if (gk[SDL_SCANCODE_A]) 
 		{
 			if (roll <= 0.32f) { mainScene.meshes[0].rotateAxis(turnSpeed, { mainScene.meshes[0].forward }); roll += turnSpeed; }

@@ -1,4 +1,6 @@
 #include "import3d.h"
+#include <stdexcept>
+#include <string>
 
 using namespace std;
 
@@ -43,5 +45,7 @@ Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, U
 		return result;
 	}
 	std::cout << "Import error" << endl;
+	string fp(filepath);
+	throw std::invalid_argument(fp + " doesn't exist");
 	return result;
 }
