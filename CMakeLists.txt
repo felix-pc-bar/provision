@@ -10,7 +10,7 @@ include(FetchContent)
 # =========================================
 
 # Choose version
-set(SDL2_VERSION "release-2.30.8")
+set(SDL2_VERSION "release-2.32.8")
 set(SDL2_BUILD_DIR "${CMAKE_SOURCE_DIR}/external/SDL2-build")
 
 # Use FetchContent but force population/build in a fixed dir
