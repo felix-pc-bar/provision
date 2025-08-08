@@ -3,7 +3,7 @@ project(provision)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# SDL2
+# SDL2 last 
 set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2-2.32.8")
 
 include_directories("${SDL2_ROOT}/include")
