@@ -3,7 +3,10 @@ project(provision)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include(FetchContent)
+
+# SDL2 (not building from source)
+set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2-2.32.8")
+
 
 # =========================================
 # SDL2 - Fetch from source, build externally
