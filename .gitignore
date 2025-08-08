@@ -1,8 +1,5 @@
-# Always include everything in external/
-!external/
-
-# Include everything under external/
-!external/**
+# exclude SDL (built from source on clone)
+external/**
 
 # Prerequisites
 *.d
