@@ -28,4 +28,14 @@ set_target_properties(provision PROPERTIES
     LINK_FLAGS "/SUBSYSTEM:WINDOWS"
 )
 
+# Path to your master content folder in the source tree
+set(MASTER_CONTENT_DIR "${CMAKE_SOURCE_DIR}/content")
+
+# Custom command: copy into the same dir as the executable for the current config
+add_custom_command(
+    TARGET provision PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${MASTER_CONTENT_DIR}" "$<TARGET_FILE_DIR:provision>/content"
+)
+
 target_link_libraries(provision SDL2main SDL2)
