@@ -3,8 +3,7 @@ project(provision)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# SDL2 last 
-
+# SDL2 last 2
 set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2-2.32.8")
 
 

@@ -98,7 +98,9 @@ class Colour // Store colour as decimal fractions of RGB
 public:
 	Colour();
 	Colour(float r, float g, float b);
+	Colour(float r, float g, float b, float a);
 	uint32_t raw();
+	friend Colour operator*(const Colour& c1, const float val);
 	Colour& operator*=(const float val);
 
 	
