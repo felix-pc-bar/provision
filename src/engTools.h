@@ -67,6 +67,8 @@ public:
 	Quaternion operator*(const Quaternion& q) const;
 	Quaternion inverse() const;
 	void normalise();
+
+	friend std::ostream& operator<<(std::ostream& os, const Quaternion& q);
 };
 
 class Camera

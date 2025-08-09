@@ -31,7 +31,8 @@ add_executable(provision
 )
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set_target_properties(provision PROPERTIES
-    LINK_FLAGS "/SUBSYSTEM:WINDOWS"
+LINK_FLAGS "/SUBSYSTEM:CONSOLE"
+WIN32_EXECUTABLE TRUE
 )
 
 # Path to your master content folder in the source tree

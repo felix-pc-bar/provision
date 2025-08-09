@@ -412,3 +412,8 @@ void Camera::calcBaseVecs()
 	this->right = { 1,0,0 }; // World right
 	this->right.rotateQuat(this->quatIdentity);
 }
+
+ostream& operator<<(ostream& os, const Quaternion& q)
+{
+    return os << "[" << q.w << " " << q.x << " " << q.y << " " << q.z << "]";
+}
