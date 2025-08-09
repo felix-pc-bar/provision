@@ -63,7 +63,7 @@ int main(int argc, char** args) {
 	mainScene.meshes.emplace_back(importObj("content/obj/credit.obj"));
 	mainScene.meshes[4].materials.emplace_back(0.8f, 0.8f, 0.5f);
 	mainScene.meshes.emplace_back(importObj("content/obj/godray.obj"));
-	mainScene.meshes[5].materials.emplace_back(1.0f, 1.0f, 1.0f);
+	mainScene.meshes[5].materials.emplace_back(1.0f, 1.0f, 1.0f, 0.5f);
 
 	const Uint8* gk; 
 	SDL_Event event;

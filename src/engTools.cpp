@@ -211,9 +211,11 @@ Material::Material(float r, float g, float b, float a)
 	this->colour.alpha = a;
 }
 
-Colour::Colour(float r, float g, float b) : red(r), green(g), blue(b) {}
+Colour::Colour(float r, float g, float b) : red(r), green(g), blue(b), alpha(1){}
 
-Colour::Colour() : red(1), green(1), blue(1) {}
+Colour::Colour(float r, float g, float b, float a) : red(r), green(g), blue(b), alpha(a){}
+
+Colour::Colour() : red(1), green(1), blue(1), alpha(1){}
 
 Colour& Colour::operator*=(const float val)
 {
@@ -222,6 +224,14 @@ Colour& Colour::operator*=(const float val)
 	blue *= val;
 	return *this;
 }
+
+Colour operator*(const Colour& c1, const float val) 
+{
+	Colour cr(c1.red * val, c1.green * val, c1.blue * val, c1.alpha);
+	return cr;
+}
+
+
 uint32_t Colour::raw()
 {
 	return	((uint32_t)(0xFF * this->alpha) << 24) |
