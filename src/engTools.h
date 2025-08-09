@@ -156,9 +156,11 @@ public:
 	void setRotation(const Rotation3d& rot);
 
 	void rotateAxis(float angle, const Position3d& axis);
+	void rotateAxis(float angle, const Position3d& axis, const Position3d& pivot);
 	void rotateQuat(const Quaternion& q);
+	void rotateQuat(const Quaternion& q, const Position3d& pivot);
 
-	void setRotationQuat(const Quaternion& q);
+	void setRotationQuat(const Quaternion& q); // Faulty
 	vector<Material> materials;
 	vector<int> matIndices; // Stores an index of materials corresponding to each tri
 

@@ -343,12 +343,30 @@ void Mesh::rotateQuat(const Quaternion& q)
 	}
 }
 
+void Mesh::rotateQuat(const Quaternion& q, const Position3d& pivot)
+{
+	for (Vertex3d& vert : this->vertices)
+	{
+		Position3d relPos = vert.position - pivot;
+		relPos.rotateQuat(q);
+		vert.position = relPos + pivot;
+	}
+}
+
 void Mesh::rotateAxis(float angle, const Position3d& axis)
 {
 	Quaternion qDelta(angle, axis);
 	this->quatIdentity =  qDelta * this->quatIdentity;
 	this->quatIdentity.normalise();
 	this->rotateQuat({ angle, axis });
+}
+
+void Mesh::rotateAxis(float angle, const Position3d& axis, const Position3d& pivot)
+{
+	Quaternion qDelta(angle, axis);
+	this->quatIdentity = qDelta * this->quatIdentity;
+	this->quatIdentity.normalise();
+	this->rotateQuat(qDelta, pivot);
 }
 
 void Mesh::setRotationQuat(const Quaternion& qTarget) {
