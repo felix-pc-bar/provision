@@ -3,8 +3,9 @@
 #include <vector>
 //#include <cstdint>
 #include <iostream>
+#include <string>
 
-using std::vector, std::ostream;
+using std::vector, std::ostream, std::string;
 
 class Rotation3d;
 class Quaternion;
@@ -101,7 +102,7 @@ public:
 	Colour();
 	Colour(float r, float g, float b);
 	Colour(float r, float g, float b, float a);
-	uint32_t raw();
+	uint32_t raw() const;
 	friend Colour operator*(const Colour& c1, const float val);
 	Colour& operator*=(const float val);
 
@@ -137,10 +138,6 @@ class Mesh
 {
 public:
 	Mesh();
-	vector<Vertex3d> vertices; //vector of type Vertex
-	vector<int> indices; //stores tri indices as 3-tuple
-	vector<Mesh*> children;
-
 	void addVertex(Position3d pos);
 	void addFace(vector<int> &ind);
 
@@ -151,9 +148,11 @@ public:
 
 	void rotate(const Rotation3d& rot, const Position3d& pivot); 
 	void setRotation(const Rotation3d& rot, const Position3d& pivot);
-	// pivoting by object origin (assumed)
-	void rotate(const Rotation3d& rot); 
-	void setRotation(const Rotation3d& rot);
+
+	void rotate(const Rotation3d& rot); // Depracated, use quaternion instead
+	void setRotation(const Rotation3d& rot); // Depracated, use quaternion instead
+
+	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 
 	void rotateAxis(float angle, const Position3d& axis);
 	void rotateAxis(float angle, const Position3d& axis, const Position3d& pivot);
@@ -161,27 +160,36 @@ public:
 	void rotateQuat(const Quaternion& q, const Position3d& pivot);
 
 	void setRotationQuat(const Quaternion& q); // Faulty
-	vector<Material> materials;
-	vector<int> matIndices; // Stores an index of materials corresponding to each tri
+
+	string name; // Name of the mesh
+
+	vector<Vertex3d> vertices; //vector of type Vertex
+	vector<int> indices; //stores tri indices as 3-tuple
+	vector<Mesh*> children;
 
 	Position3d position;
 	Rotation3d rotation;
 	Quaternion quatIdentity;
 
+	vector<Material> materials;
+	vector<int> matIndices; // Stores an index of materials corresponding to each tri
+
 	Position3d up;
 	Position3d right;
 	Position3d forward;
 
-	void calcBaseVecs(); // (re)calculate forward/right/up vectors
 };
 
 
 class Scene
 {
 public:
-	Camera* currentCam;
+	Camera* currentCam = nullptr;
 	vector<Mesh> meshes;
 	vector<Camera> cams;
+	void addMesh(Mesh& mesh); // Add a mesh to the scene
+	string getName(string candidate) const; // Get a name for a mesh
+	string getName() const; // Generate default name
 };
 
 

@@ -1,6 +1,7 @@
 #include "import3d.h"
 #include <stdexcept>
 #include <string>
+#include <filesystem>
 
 using namespace std;
 
@@ -12,6 +13,8 @@ Mesh importObj(string filepath) // Objects should be exported as Forward = +Y, U
 	Mesh result;
 	if (objfile.is_open())
 	{
+		std::filesystem::path p(filepath);
+		result.name = p.stem().string();
 		while (getline(objfile, line))
 		{
 			if (line._Starts_with("v "))

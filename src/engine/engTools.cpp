@@ -139,6 +139,11 @@ void Quaternion::normalise()
 	z /= mag;
 }
 
+ostream& operator<<(ostream& os, const Quaternion& q)
+{
+	return os << "[" << q.w << " " << q.x << " " << q.y << " " << q.z << "]";
+}
+
 Position3d Position3d::cross(const Position3d& operand) const
 {
 	return Position3d(
@@ -232,7 +237,7 @@ Colour operator*(const Colour& c1, const float val)
 }
 
 
-uint32_t Colour::raw()
+uint32_t Colour::raw() const
 {
 	return	((uint32_t)(0xFF * this->alpha) << 24) |
 			((uint32_t)(0xFF * this->red) << 16) |
@@ -240,12 +245,38 @@ uint32_t Colour::raw()
 			((uint32_t)(0xFF * this->blue));
 }
 
-Mesh::Mesh() { 
-	//this->addVertex(Position3d{ 0.0f, 1.0f, 0.5f });
-	//this->addVertex(Position3d{ -0.5f, 1.0f, -0.5f });
-	//this->addVertex(Position3d{ 0.5f, 1.0f, -0.5f });
+Mesh::Mesh() 
+{ 
+	this->position = { 0,0,0 };
+	this->rotation = { 0,0,0 };
+	this->quatIdentity = Quaternion(); // Default identity quaternion
+	this->calcBaseVecs(); // Calculate base vectors
+	this->name = "New Mesh"; // Default name
+	this->quatIdentity.normalise(); // Normalise the identity quaternion	
+}
 
-	//indices = { 0, 1, 2 };
+string Scene::getName(string candidate) const
+{
+	int x = 0;
+	string original = candidate; // Store the original name
+	bool nameTaken = false;
+	// Check if the name is already taken
+	for (const Mesh& m : meshes)
+	{
+		if (m.name == candidate)
+		{
+			nameTaken = true;
+			x += 1;
+			candidate = original + "." + std::to_string(x); // Append a number to the name
+		}
+	}
+	if (nameTaken) { cout << "Warning: name" << original << " wasn't available." << endl; }
+	return candidate;
+}
+
+string Scene::getName() const
+{
+	return getName("New Mesh");
 }
 
 //void Mesh::instanceOnMesh(Mesh& instancer)
@@ -412,8 +443,6 @@ bool bb3d::containsMesh(Mesh m) const
 		(p.z >= minZ && p.z <= maxZ);
 }
 
-Camera* currentCam = nullptr;
-
 void Camera::rotateCam(float angle, const Position3d& axis)
 {
 	Quaternion qDelta(angle, axis);
@@ -431,7 +460,8 @@ void Camera::calcBaseVecs()
 	this->right.rotateQuat(this->quatIdentity);
 }
 
-ostream& operator<<(ostream& os, const Quaternion& q)
+void Scene::addMesh(Mesh& mesh) 
 {
-    return os << "[" << q.w << " " << q.x << " " << q.y << " " << q.z << "]";
+	mesh.name = this->getName(mesh.name);
+	this->meshes.emplace_back(mesh);
 }
