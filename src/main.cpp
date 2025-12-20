@@ -42,7 +42,15 @@ int main(int argc, char** args) {
 	SDL_Event event; // SDL event buffer
 	CPURenderer vp(mainRenderer, screenwidth, screenheight); // Create viewport
 	vp.Clear(0xFF5792FF); // sky blue
-	
+	// ====
+	// TIME
+	// ====
+
+	int frame = 0;
+	auto lastTime = dtclock::now();
+	int fpsLimit = 0;
+	float fpsLimTick = 1.0f / fpsLimit;
+
 	// ===========
 	// SCENE SETUP
 	// ===========
@@ -77,22 +85,21 @@ int main(int argc, char** args) {
 	mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 	
 	float flightSpeed = 0.2f;
-	float turnSpeed = 0.02f;
 	float roll = 0.0f;
 	float pitch = 0.0f;
-
-	// ====
-	// TIME
-	// ====
-
-	int frame = 0;
-	auto lastTime = dtclock::now();
 
 	while (true)
 	{
 		auto currentTime = dtclock::now();
 		std::chrono::duration<float> elapsed = currentTime - lastTime;
-		float deltaTime = elapsed.count();
+		float deltaTime = elapsed.count(); // Raw frametime (s)
+		if (fpsLimit != 0 && deltaTime < fpsLimTick)
+		{
+			SDL_Delay((fpsLimTick - deltaTime) * 1000);
+			deltaTime += fpsLimTick - deltaTime;
+			currentTime = dtclock::now();
+		}
+		float dtMulti = deltaTime / (1.0f / fpsTarget);
 		lastTime = currentTime;
 		float fps = 1.0f / deltaTime;
 		cout << fps << endl;
@@ -114,6 +121,8 @@ int main(int argc, char** args) {
 			}
 		}
 
+		float turnSpeed = 0.05f * dtMulti;
+
 		if (gk[SDL_SCANCODE_A]) 
 		{
 			if (roll <= 0.32f) { mainScene.meshes[0].rotateAxis(turnSpeed, { mainScene.meshes[0].forward }); roll += turnSpeed; }
@@ -124,34 +133,36 @@ int main(int argc, char** args) {
 		}
 		else if (roll <= 0.1f && roll > 0.0f) // reset from left roll to level
 		{
-			mainScene.meshes[0].rotateAxis(-turnSpeed, { mainScene.meshes[0].forward }); 
-			roll -= turnSpeed;
+			float rsSpeed = std::max(turnSpeed, 0.0f - roll);
+			mainScene.meshes[0].rotateAxis(-rsSpeed, { mainScene.meshes[0].forward }); 
+			roll -= rsSpeed;
 		}
 		else if (roll >= -0.1f && roll < 0.0f)
 		{
-			mainScene.meshes[0].rotateAxis(turnSpeed, { mainScene.meshes[0].forward }); 
-			roll += turnSpeed;
+			float rsSpeed = std::min(turnSpeed, 0.0f - roll);
+			mainScene.meshes[0].rotateAxis(rsSpeed, { mainScene.meshes[0].forward }); 
+			roll += rsSpeed;
 		}
 
-		mainScene.meshes[0].rotateAxis(roll / -30.0f, { 0, 1, 0 }); 
+		mainScene.meshes[0].rotateAxis((roll * dtMulti) / -15.0f, { 0, 1, 0 }); 
 
 		if (gk[SDL_SCANCODE_S] && pitch >= -0.32f) 
 		{	
-			mainScene.meshes[0].rotateAxis(-turnSpeed, {mainScene.meshes[0].right}); 
-			pitch -= turnSpeed;
+			mainScene.meshes[0].rotateAxis(-turnSpeed / 2.0f, {mainScene.meshes[0].right}); 
+			pitch -= turnSpeed / 2.0f;
 		}
 
 		if (gk[SDL_SCANCODE_W] && pitch <= 0.80f) 
 		{	
-			mainScene.meshes[0].rotateAxis(turnSpeed, {mainScene.meshes[0].right}); 
-			pitch += turnSpeed;
+			mainScene.meshes[0].rotateAxis(turnSpeed / 2.0f, {mainScene.meshes[0].right}); 
+			pitch += turnSpeed / 2.0f;
 		}
 
-		flightSpeed = (pitch + 0.8f) / 2.0f;
+		flightSpeed = (pitch + 0.8f) * 1.2f;
 
 		mainScene.cams[0].quatIdentity = mainScene.meshes[0].quatIdentity * camLookOffset;
 
-		mainScene.meshes[0].move(mainScene.meshes[0].forward * flightSpeed);
+		mainScene.meshes[0].move(mainScene.meshes[0].forward * flightSpeed * dtMulti);
 		
 		Position3d camOffset(0, 4, -10);
 		camOffset.rotateQuat(mainScene.meshes[0].quatIdentity);
