@@ -109,7 +109,7 @@ void Game::run()
 		dtFac = dt * 60.0f;
 		if (frame % 10 == 0)
 		{
-			cout << mainScene.objects[1].mesh->forward << endl;
+			cout << fps << endl;
 		}
 
 		// Handle inputs
