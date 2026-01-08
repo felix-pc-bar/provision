@@ -1,9 +1,9 @@
 #pragma once
-//#include <SDL.h>
+
 #include <vector>
-//#include <cstdint>
 #include <iostream>
 #include <string>
+#include <cstdint>
 
 using std::vector, std::ostream, std::string;
 
@@ -27,7 +27,6 @@ public:
 	void normalise();
 	void flip();
 	float lengthSquared() const;
-
 
 	friend ostream& operator<< (ostream& os, Position3d pos);
 	friend Position3d operator+(const Position3d& p1, const Position3d& p2);
@@ -116,9 +115,12 @@ class Material
 {
 public:
 	Material();
-	Material(float r, float g, float b);
-	Material(float r, float g, float b, float a);
+	Material(float r, float g, float b, int pointSize = 0, bool shade = true, bool allowDebugVis = true);
+	Material(float r, float g, float b, float a, int pointSize = 0, bool shade = true, bool allowDebugVis = true);
+	int pointWidth; //Size of squares to draw for points in scene
 	Colour colour;
+	bool shadeMat; //Whether to shade this material
+	bool omitDbg; //Don't change shading in debug
 };
 
 class Mesh;
@@ -132,6 +134,17 @@ public:
 	bool containsMesh(Mesh m) const;
 	
 	Position3d p1, p2;
+};
+
+class Object3D
+{
+public:
+	Object3D();
+	Object3D(Mesh* meshin);
+	Mesh* mesh;
+	std::vector<Position3d> points;
+	vector<Material> materials;
+	string name; // Name of the object
 };
 
 class Mesh
@@ -161,7 +174,6 @@ public:
 
 	void setRotationQuat(const Quaternion& q); // Faulty
 
-	string name; // Name of the mesh
 
 	vector<Vertex3d> vertices; //vector of type Vertex
 	vector<int> indices; //stores tri indices as 3-tuple
@@ -171,13 +183,11 @@ public:
 	Rotation3d rotation;
 	Quaternion quatIdentity;
 
-	vector<Material> materials;
 	vector<int> matIndices; // Stores an index of materials corresponding to each tri
 
 	Position3d up;
 	Position3d right;
 	Position3d forward;
-
 };
 
 
@@ -185,14 +195,16 @@ class Scene
 {
 public:
 	Camera* currentCam = nullptr;
-	vector<Mesh> meshes;
+	vector<Object3D> objects;
 	vector<Camera> cams;
-	void addMesh(Mesh& mesh); // Add a mesh to the scene
-	string getName(string candidate) const; // Get a name for a mesh
-	string getName() const; // Generate default name
+	void addObject(Object3D ob); // Add an object to the scene
+	string getName(string candidate) const; // Get a name for a object
+	Object3D* objectByName(std::string name);
 };
 
 
 extern Scene* currentScene;
 
 const float pi = 3.14159f; // looks like a good place to me 
+
+float lerp(float a, float b, float ratio);

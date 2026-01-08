@@ -1,55 +1,6 @@
-# exclude SDL (built from source on clone)
-external/**
-
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-#*.obj
-# compile object vs 3d object :/
-
-# extra
+# Im SO DONE WITH THIS STUPhfdshjkabvsahiuov
 /build/
-/.vs/
 /out/
-/CMakeSettings.json
-*.log
-*.tlog
-*.vcxproj.FileListAbsolute.txt
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# debug information files
-*.dwo
-
+/.vs/
+/.vscode/
+/toolchains/mingw64/

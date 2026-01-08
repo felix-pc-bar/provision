@@ -1,0 +1,49 @@
+{
+    "version": 8,
+    "configurePresets": [
+        {
+            "name": "mingw-debug",
+            "displayName": "mingw-debug",
+            "description": "Using vended compilers",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
+                "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
+				"CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "mingw-release",
+            "displayName": "mingw-release",
+            "description": "Using vended compilers",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "CMAKE_MAKE_PROGRAM": "${sourceDir}/toolchains/ninja.exe",
+                "CMAKE_C_COMPILER": "${sourceDir}/toolchains/mingw64/bin/gcc.exe",
+                "CMAKE_CXX_COMPILER": "${sourceDir}/toolchains/mingw64/bin/g++.exe",
+				"CMAKE_RC_COMPILER": "${sourceDir}/toolchains/mingw64/bin/windres.exe",
+                "CMAKE_BUILD_TYPE": "MinSizeRel"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "mingw-release",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "mingw-release"
+        },
+        {
+            "name": "mingw-debug",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "mingw-debug"
+        }
+    ]
+}

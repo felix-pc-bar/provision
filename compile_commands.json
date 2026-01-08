@@ -1,0 +1,62 @@
+[
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\main.cpp.obj -c F:\\_repos\\barbershop\\src\\main.cpp",
+  "file": "F:/_repos/barbershop/src/main.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/main.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\render\\components\\CPU3D.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\render\\components\\CPU3D.cpp",
+  "file": "F:/_repos/barbershop/src/engine/render/components/CPU3D.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/render/components/CPU3D.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\engTools.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\engTools.cpp",
+  "file": "F:/_repos/barbershop/src/engine/engTools.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/engTools.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\logic2d.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\logic2d.cpp",
+  "file": "F:/_repos/barbershop/src/engine/logic2d.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/logic2d.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\engconfig.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\engconfig.cpp",
+  "file": "F:/_repos/barbershop/src/engine/engconfig.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/engconfig.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\import3d.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\import3d.cpp",
+  "file": "F:/_repos/barbershop/src/engine/import3d.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/import3d.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\game.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\game.cpp",
+  "file": "F:/_repos/barbershop/src/engine/game.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/game.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\render\\components\\CPU2D.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\render\\components\\CPU2D.cpp",
+  "file": "F:/_repos/barbershop/src/engine/render/components/CPU2D.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/render/components/CPU2D.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\g++.exe -IF:/_repos/barbershop/external/SDL2/include -g -std=gnu++17 -BF:/_repos/barbershop/toolchains/mingw64/bin/ -o CMakeFiles\\barbershop.dir\\src\\engine\\render\\render.cpp.obj -c F:\\_repos\\barbershop\\src\\engine\\render\\render.cpp",
+  "file": "F:/_repos/barbershop/src/engine/render/render.cpp",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/engine/render/render.cpp.obj"
+},
+{
+  "directory": "F:/_repos/barbershop/out/build/mingw-debug",
+  "command": "F:\\_repos\\barbershop\\toolchains\\mingw64\\bin\\windres.exe -O coff -I F:/_repos/barbershop/external/SDL2/include F:\\_repos\\barbershop\\src\\app_icon.rc CMakeFiles\\barbershop.dir\\src\\app_icon.rc.obj",
+  "file": "F:/_repos/barbershop/src/app_icon.rc",
+  "output": "F:/_repos/barbershop/out/build/mingw-debug/CMakeFiles/barbershop.dir/src/app_icon.rc.obj"
+}
+]
