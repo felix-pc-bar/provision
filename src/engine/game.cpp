@@ -9,12 +9,15 @@
 #include <SDL_scancode.h>
 #include <SDL_stdinc.h>
 #include <SDL_timer.h>
+#include <SDL_keycode.h>
 
 #include "import3d.h"
-#include "engconfig.h"
+#include "globals.h"
 #include "game.h"
-#include "engTools.h"
+#include "general3d.h"
 #include "render/render.h"
+#include "material.h"
+#include "quaternion.h"
 
 using std::endl, std::cout;
 using dtclock = std::chrono::steady_clock;
@@ -103,7 +106,7 @@ void Game::run()
 			dt += fpsLimTick - dt;
 			currentTime = dtclock::now();
 		}
-		float dtMulti = dt / (1.0f / fpsTarget);
+		float dtMulti = dt / (1.0f / globfpsTarget);
 		lastTime = currentTime;
 		float fps = 1.0f / dt;
 		dtFac = dt * 60.0f;
@@ -113,18 +116,18 @@ void Game::run()
 		}
 
 		// Handle inputs
-		mainScene.cams[0].calcBaseVecs();
+		mainScene.cams[0].calcCamData();
 		gk = SDL_GetKeyboardState(NULL); 
 		while (SDL_PollEvent(&event)){
 			if (event.type == SDL_QUIT || gk[SDL_SCANCODE_ESCAPE]) {
 				break;  
 			}
-			if (event.type == SDL_MOUSEMOTION && freecam)
+			if (event.type == SDL_MOUSEMOTION && globFreecam)
 			{
 				mainScene.cams[0].rotateCam((float)event.motion.xrel / 1000.0f, { 0,1,0 });
 				mainScene.cams[0].rotateCam((float)event.motion.yrel / 1000.0f, mainScene.cams[0].right);
 			}
-			if (event.type == SDL_MOUSEWHEEL && freecam)
+			if (event.type == SDL_MOUSEWHEEL && globFreecam)
 			{
 				if (event.wheel.y > 0) { freecamspeedbase += 0.01f; }
 				if (event.wheel.y < 0 && freecamspeedbase > 0.01f) { freecamspeedbase -= 0.01f; }
@@ -132,12 +135,12 @@ void Game::run()
 			if (event.type == SDL_KEYDOWN && event.key.repeat == 0)
 			{
 				// Keypress events here
-				if (event.key.keysym.sym == SDLK_f) {drawPoints = !drawPoints;}
-				if (event.key.keysym.sym == SDLK_v) {wireframe = !wireframe;}
-				if (event.key.keysym.sym == SDLK_c) {freecam = !freecam;}
+				if (event.key.keysym.sym == SDLK_f) {globDrawPoints = !globDrawPoints;}
+				if (event.key.keysym.sym == SDLK_v) {globWireframe = !globWireframe;}
+				if (event.key.keysym.sym == SDLK_c) {globFreecam = !globFreecam;}
 			}
 		}
-		if (freecam)
+		if (globFreecam)
 		{
 			// Key hold events here
 			if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = freecamspeedbase * 5 * dtFac; }
@@ -175,7 +178,7 @@ void Game::run()
 				roll += rsSpeed;
 			}
 
-			mainScene.objects[1].mesh->rotateAxis((roll * dtMulti) / -15.0f, { 0, 1, 0 }); 
+			mainScene.objects[1].mesh->rotateAxis((roll * dtMulti) / -15.0f, { 0, 0, 1 }); 
 
 			if (gk[SDL_SCANCODE_S] && pitch >= -0.32f) 
 			{	
@@ -200,6 +203,15 @@ void Game::run()
 			mainScene.cams[0].pos = mainScene.objects[1].mesh->position + camOffset;
 		}
 		this->renderer->renderScene(*currentScene);
+		
+		Position3d botVec = mainScene.cams[0].forward;
+		botVec.rotateQuat(Quaternion(mainScene.cams[0].fov / 2.0f, mainScene.cams[0].right));
+		float botInclination = botVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
+		Position3d topVec = mainScene.cams[0].forward;
+		topVec.rotateQuat(Quaternion(mainScene.cams[0].fov / -2.0f, mainScene.cams[0].right));
+		float topInclination = topVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
+		this->renderer->clearGrad(Colour("grey"), Colour("grey4"), botInclination, topInclination);
+
 		frame++;
 	}
 	while (event.type != SDL_QUIT && !gk[SDL_SCANCODE_ESCAPE]);

@@ -1,5 +1,4 @@
 #include <SDL.h>
-#include <cstdlib>
 #include <iostream>
 #include <ostream>
 #include <begin_code.h>
@@ -12,17 +11,21 @@
 #include <SDL_video.h>
 #include <process.h>
 #include <algorithm>
+#include <vector>
+#include <cstdint>
 
 #include "render.h"
-#include "../engconfig.h"
 #include "components/CPU3D.h"
-#include <vector>
-#include "../engTools.h"
 #include "components/CPU2D.h"
+
+#include "../globals.h"
+#include "../general3d.h"
+#include "../general2d.h"
+#include "../quaternion.h"
 
 using std::cout, std::endl;
 
-cRenderer::cRenderer()
+cRenderer::cRenderer(int renderwidth, int renderheight)
 {
 	// =========
 	// SDL SETUP
@@ -41,20 +44,47 @@ cRenderer::cRenderer()
 		system("pause");
 	}
 
-	result = SDL_CreateWindowAndRenderer(screenwidth, screenheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
+	result = SDL_CreateWindowAndRenderer(renderwidth, renderheight, SDL_WINDOW_FULLSCREEN_DESKTOP, &window, &sdlRenderer);
 	if (result < 0)
 	{
 		cout << "Error creating window and renderer: " << SDL_GetError() << endl;
 	}
 
+	this->width = renderwidth;
+	this->height = renderheight;
+
 	SDL_SetWindowTitle(window, "Barbershop Engine");
 	SDL_ShowCursor(SDL_DISABLE); // Hide cursor
 	SDL_SetRelativeMouseMode(SDL_TRUE); // Lock cursor to window
 	// Setup screenTexture and other GPU stuff
-	this->bufScreen.resize(screenwidth * screenheight, 0xFF000000);
-	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, screenwidth, screenheight);
-	this->cpu3d = new CPU3D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
-	this->cpu2d = new CPU2D(screenTexture, sdlRenderer, screenwidth, screenheight, &this->bufScreen); // Create viewport
+	this->bufScreen.resize(renderwidth * renderheight, 0xFF000000);
+	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, renderwidth, renderheight);
+	this->razor3d = new Razor3D(renderwidth, renderheight, &this->bufScreen, true); // Create viewport
+	this->hairline = new Hairline(renderwidth, renderheight, &this->bufScreen); // Create viewport
+}
+
+void cRenderer::resize(int newWidth, int newHeight) // TODO crashes upon second resize?
+{
+	// if (newWidth == width && newHeight == height) { return; }
+
+	if (screenTexture)
+	{
+		SDL_DestroyTexture(screenTexture);
+		screenTexture = nullptr;
+	}
+
+	this->width = newWidth;
+	this->height = newHeight;
+
+	this->bufScreen.resize(newWidth * newHeight, 0xFF000000);
+	this->screenTexture = SDL_CreateTexture(sdlRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, newWidth, newHeight);
+	this->razor3d->width = newWidth;
+	this->razor3d->height = newHeight;
+	this->razor3d->bufMain = &bufScreen;
+	this->hairline->width = newWidth;
+	this->hairline->height = newHeight;
+	this->hairline->bufMain = &bufScreen;
+	return;
 }
 
 cRenderer::~cRenderer() {
@@ -74,13 +104,12 @@ cRenderer::~cRenderer() {
 
 void cRenderer::renderScene(Scene& scene) const
 {
-	this->cpu3d->Clear(0xFF5792FF);
-	this->cpu2d->Clear(0xFF5792FF);
 	std::vector<TriangleToRender> triangles;
 	std::vector<PointToRender> renderPoints;
 
 	if (!scene.currentCam) return;
 	Position3d camPos = scene.currentCam->pos;
+	Quaternion inverseRotaton = scene.currentCam->quatIdentity.conjugate();
 
 	for (Object3D& ob : scene.objects)
 	{
@@ -90,7 +119,7 @@ void cRenderer::renderScene(Scene& scene) const
 			{
 				Mesh& mesh = *ob.mesh;
 				Position3d pos = mesh.position;
-				Rotation3d rot = mesh.rotation;
+				//Rotation3d rot = mesh.rotation;
 				for (size_t i = 0; i + 2 < mesh.indices.size(); i += 3)
 				{
 					Vertex3d& v1 = mesh.vertices[mesh.indices[i]];
@@ -106,7 +135,7 @@ void cRenderer::renderScene(Scene& scene) const
 				}
 			}
 		}
-		if (!ob.points.empty() && drawPoints)
+		if (!ob.points.empty() && globDrawPoints)
 		{
 			for (Position3d point : ob.points)
 			{
@@ -126,38 +155,117 @@ void cRenderer::renderScene(Scene& scene) const
 		});
 
 	// Draw
+	Quaternion cameraRotationInverse = currentScene->currentCam->quatIdentity.conjugate();
 	for (TriangleToRender& tri : triangles)
 	{
-		Point2d p1(tri.v1);
-		Point2d p2(tri.v2);
-		Point2d p3(tri.v3);
-
-		if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) && 
-			(isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) &&
-			(p1.x != -99999 && p2.x != -99999 && p3.x != -99999)
-		)
+		if (globWireframe)
 		{
-			if (wireframe)
+			Point2d p1 = tri.v1.position.project(scene.currentCam, this);
+			Point2d p2 = tri.v2.position.project(scene.currentCam, this);
+			Point2d p3 = tri.v3.position.project(scene.currentCam, this);
+
+			if ((tri.v1.position.cameraspace().z > 0 && tri.v2.position.cameraspace().z > 0 && tri.v3.position.cameraspace().z > 0) &&
+				(isTriangleOnScreen(p1, p2, p3, globScreenwidth, globScreenheight)) &&
+				(p1.x != -99999 && p2.x != -99999 && p3.x != -99999)
+				)
 			{
-				this->cpu2d->drawLine(Point2d(tri.v1), Point2d(tri.v2), 1, tri.material.colour.raw());
-				this->cpu2d->drawLine(Point2d(tri.v2), Point2d(tri.v3), 1, tri.material.colour.raw());
-				this->cpu2d->drawLine(Point2d(tri.v3), Point2d(tri.v1), 1, tri.material.colour.raw());
+				this->hairline->drawLine(p1, p2, tri.material.colour.raw());
+				this->hairline->drawLine(p2, p3, tri.material.colour.raw());
+				this->hairline->drawLine(p3, p1, tri.material.colour.raw());
 			}
-			else
-			{
-				this->cpu3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material);
-			}
+		}
+		else
+		{
+			this->razor3d->drawTri(tri.v1, tri.v2, tri.v3, tri.material, scene.currentCam, this);
 		}
 	}
 	for (PointToRender& pt : renderPoints)
 	{
 		if (pt.material.pointWidth != 0)
 		{
-			this->cpu2d->drawPoint(Point2d(pt.pos), pt.material.pointWidth);
+			this->hairline->drawPoint(pt.pos.project(scene.currentCam, this), pt.material.pointWidth);
 		}
 	}
-	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), cpu2d->width * sizeof(uint32_t));
-	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), cpu3d->width * sizeof(uint32_t));
+	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), hairline->width * sizeof(uint32_t));
+	SDL_UpdateTexture(screenTexture, nullptr, bufScreen.data(), razor3d->width * sizeof(uint32_t));
 	SDL_RenderCopy(sdlRenderer, screenTexture, nullptr, nullptr);
 	SDL_RenderPresent(sdlRenderer);
+}
+
+void cRenderer::clear(Colour col)
+{
+	this->razor3d->clear(col.raw());
+	std::fill(bufScreen.begin(), bufScreen.end(), col.raw());
+	return;
+}
+
+// void cRenderer::clear(Material mat) 
+// {
+// 	for (int y = 0; y < this->height; y++)
+// 	{
+// 		for (int x = 0; x < this->width; x++)
+// 		{
+// 			if (mat.ditherValue < this->razor3d->bayer8x8[x % 8][y % 8])
+// 			{ bufScreen[(y * this->height) + x] = Colour("black").raw(); }
+// 			else {  bufScreen[(y * this->height) + x] = mat.colour.raw(); }
+// 		}
+// 	}
+// 	return;
+// }
+
+void cRenderer::clearGrad(Colour colBot, Colour colTop, float ditherValBot, float ditherValTop)
+{
+	if (ditherValBot == -1.0f)
+	{
+		float r = colTop.red;
+		float rStep = (colBot.red - colTop.red) / (float)this->height;
+		float g = colTop.green;
+		float gStep = (colBot.green - colTop.green) / (float)this->height;
+		float b = colTop.blue;
+		float bStep = (colBot.blue - colTop.blue) / (float)this->height;
+
+		for (int y = 0; y < this->height; y++)
+		{
+			for (int x = 0; x < this->width; x++)
+			{
+				this->bufScreen[(y*this->width) + x] = Colour(r, g, b).raw();	
+			}
+			r += rStep;
+			g += gStep;
+			b += bStep;
+		}
+		return;
+	}
+	else
+	{
+		float val = ditherValTop * 256.0f;
+		float valStep = ((ditherValBot * 256.0f) - val) / (float)this->height;
+		uint32_t colBotRaw = colBot.raw();
+		uint32_t colTopRaw = colTop.raw();
+		for (int y = 0; y < height; ++y)
+		{
+			const uint8_t* b = razor3d->bayer8x8[y & 7];
+			uint32_t* row = bufScreen.data() + y * width;
+
+			int x = 0;
+			for (; x + 7 < width; x += 8)
+			{
+				row[x + 0] = val < b[0] ? colBotRaw : colTopRaw;
+				row[x + 1] = val < b[1] ? colBotRaw : colTopRaw;
+				row[x + 2] = val < b[2] ? colBotRaw : colTopRaw;
+				row[x + 3] = val < b[3] ? colBotRaw : colTopRaw;
+				row[x + 4] = val < b[4] ? colBotRaw : colTopRaw;
+				row[x + 5] = val < b[5] ? colBotRaw : colTopRaw;
+				row[x + 6] = val < b[6] ? colBotRaw : colTopRaw;
+				row[x + 7] = val < b[7] ? colBotRaw : colTopRaw;
+			}
+
+			for (; x < width; ++x)
+			{
+				row[x] = val < b[x & 7] ? colBotRaw : colTopRaw;
+			}
+			val += valStep;
+		}	
+		return;
+	}
 }

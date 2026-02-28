@@ -7,9 +7,9 @@
 #include <SDL_render.h>
 
 #include "CPU3D.h"
-#include "../../engTools.h"
-#include "../../logic2d.h"
-#include "../../engconfig.h"
+#include "../../general3d.h"
+#include "../../general2d.h"
+#include "../../globals.h"
 
 using std::endl, std::cout;
 
@@ -29,33 +29,44 @@ PointToRender::PointToRender(Position3d Pos, const Position3d& camPos, Material*
 	distanceToCamera = diff.lengthSquared();
 }
 
-CPU3D::CPU3D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
+Razor3D::Razor3D(int width, int height, std::vector<uint32_t>* screenbuffer, bool renderdithered) //constructor
 {
-	texture = screentex;
-	sdlRenderer = renderer;
 	this->width = width;
 	this->height = height;
 	this->bufMain = screenbuffer;
 	bufDepth.resize(width * height, 0);
 	bufIsDrawn.resize(width * height, false);
+	dither = renderdithered;
 }
 
-void CPU3D::Clear(uint32_t color) 
+void Razor3D::clear(uint32_t color) 
 {
-	std::fill(bufMain->begin(), bufMain->end(), color);
 	std::fill(bufDepth.begin(), bufDepth.end(), std::numeric_limits<float>::infinity()); // Unshaded background infinity away
 	std::fill(bufIsDrawn.begin(), bufIsDrawn.end(), false);
 }
 
-void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
+void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, Camera* cam, const cRenderer* renderer)
 {
-	Point2d p1(v1);
-	Point2d p2(v2);
-	Point2d p3(v3);
+	//Quaternion cri = Quaternion();
+	//if (camRotInv == nullptr) 
+	//{
+	//	cri = currentScene->currentCam->quatIdentity.conjugate();
+	//}
+	//else { cri = *camRotInv;  }
+
+	Vertex3d v1c(v1.position - currentScene->currentCam->pos);
+
+	// Point2d p1(v1, camRotInv);
+	// Point2d p2(v2, camRotInv);
+	// Point2d p3(v3, camRotInv);
+	Point2d p1 = v1.position.project(cam, renderer);
+	Point2d p2 = v2.position.project(cam, renderer);
+	Point2d p3 = v3.position.project(cam, renderer);
 
 	// Cull tris behind the camera viewplane 
+
 	if ((v1.position.cameraspace().z <= 0 && v2.position.cameraspace().z <= 0 && v3.position.cameraspace().z <= 0) ||
-		(!isTriangleOnScreen(p1, p2, p3, screenwidth, screenheight)) ||
+		(!isTriangleOnScreen(p1, p2, p3, globScreenwidth, globScreenheight)) ||
 		(p1.x == -99999 || p2.x == -99999 || p3.x == -99999)
 		)
 	{
@@ -75,14 +86,29 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 	Position3d viewDir = (currentScene->currentCam->pos - triCentre);
 	viewDir.normalise();
 	uint32_t rawColour = 0xFFFF00FF; // Magenta by default
+	uint16_t ditherVal = 0;
+	uint32_t ditherDark = Colour("black").raw();
 	if (mat.colour.alpha == 1.0f && mat.shadeMat) // Shade with hybrid diffuse algorithm (not physically acccurate)
 	{
 		Colour ucol = Colour(mat.colour.red, mat.colour.green, mat.colour.blue, mat.colour.alpha); // Copy values explicitly original material colour
-		float dot = normal.dot(lightNormal);
-		float value = 0.5f * dot + 0.75f;
-		value = std::min(value, 1.0f);
-		ucol *= value;
-		rawColour = ucol.raw();
+		float dot = normal.dot(globLightNormal);
+
+		if (dither) 
+		{
+			float value = (dot * 0.75f);
+			value += 0.2f;
+			value = std::max(std::min(value, 1.0f), 0.01f);
+			ditherVal = (uint8_t)(value * 0xFF); 
+			rawColour = mat.colour.raw(); // rawColour set to what i want it to be
+		}
+		else 
+		{
+			float value = (dot * 0.9f);
+			value += 0.2f;
+			value = std::max(std::min(value, 1.0f), 0.1f);
+			ucol *= value; 
+			rawColour = ucol.raw();
+		}
 	}
 	else
 	{
@@ -91,7 +117,7 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 
 	// Extract alpha from colour
 	uint8_t srcA = mat.colour.alpha * 255;
-	Rect2d bb(v1, v2, v3);
+	Rect2d bb(p1, p2, p3);
 
 	int A12 = p1.y - p2.y, B12 = p2.x - p1.x, C12 = p1.x * p2.y - p2.x * p1.y;
 	int A23 = p2.y - p3.y, B23 = p3.x - p2.x, C23 = p2.x * p3.y - p3.x * p2.y;
@@ -167,7 +193,7 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 
 		for (int y = bb.min.y; y < bb.max.y; y++)
 		{
-			int flippedY = this->height - y;
+			int flippedY = (this->height - 1) - y;
 			if (flippedY < 0 || flippedY >= this->height) continue;
 
 			int baseIndex = flippedY * width;
@@ -182,7 +208,10 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 			{
 				if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 				{
-					pixShaded[baseIndex + x] = rawColour;
+					// rawColour = Colour("white").raw();
+					if (dither && ditherVal < bayer8x8[x % 8][y % 8])
+					{ pixShaded[baseIndex + x] = ditherDark; }
+					else { pixShaded[baseIndex + x] = rawColour; }
 					bufIsDrawn[baseIndex + x] = true;
 				}
 				w1 += dw1;
@@ -221,7 +250,6 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 		{
 			if ((unsigned)x < (unsigned)width && w1 <= 0 && w2 <= 0 && w3 <= 0)
 			{
-				// We get a reference to the current pixel in the array made above; still by refernce so changes the vector
 				uint32_t& dest = pixShaded[baseIndex + x];
 				bufIsDrawn[baseIndex + x] = true;
 
@@ -234,7 +262,7 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 				uint8_t outG = (srcG * srcA + dstG * (255 - srcA)) / 255;
 				uint8_t outB = (srcB * srcA + dstB * (255 - srcA)) / 255;
 
-				// Optionally blend alpha too — here we just preserve max of src/dst
+				// Optionally blend alpha too; here we just preserve max of src/dst
 				uint8_t outA = std::max(srcA, (uint8_t)(dest >> 24));
 
 				dest = (outA << 24) | (outR << 16) | (outG << 8) | outB;
@@ -244,37 +272,4 @@ void CPU3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat)
 			w3 += dw3;
 		}
 	}
-}
-
-void CPU3D::Present()
-{
-	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
-	// Generate depth buffer visualisation
-
-	//std::vector<uint32_t> dbgDepth;
-	//dbgDepth.resize(width * height, 0xFF000000);
-	//float minDepth = std::numeric_limits<float>::infinity(), maxDepth = 0;
-	//for (int i = 0; i < bufDepth.size(); ++i)
-	//{
-	//	if (bufIsDrawn[i])
-	//	{
-	//		if (bufDepth[i] > maxDepth) { maxDepth = bufDepth[i]; }
-	//		// Questionable optimisation to elif here but we're not gonna have 1 pixel on the screen and need a depthmap
-	//		else if (bufDepth[i] < minDepth) { minDepth = bufDepth[i]; }
-	//	}
-	//}
-	//for (int i = 0; i < bufDepth.size(); ++i)
-	//{
-	//	uint8_t v = 0x00;
-	//	if (bufIsDrawn[i])
-	//	{
-	//		v = (uint8_t)(((bufDepth[i] - minDepth) / maxDepth) * 255);
-	//		//std::cout << "v: " << v << '\n';
-	//	}
-	//	dbgDepth[i] = 0xFF000000 | (v << 16) | (v << 8) | v;
-	//}
-
-	//SDL_UpdateTexture(texture, nullptr, dbgDepth.data(), width * sizeof(uint32_t));
-	SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
-	SDL_RenderPresent(sdlRenderer);
 }

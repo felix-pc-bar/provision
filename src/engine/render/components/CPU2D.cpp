@@ -5,30 +5,17 @@
 #include <SDL_render.h>
 
 #include "CPU2D.h"
-#include "../../engTools.h"
-#include "../../logic2d.h"
+#include "../../general3d.h"
+#include "../../general2d.h"
 
-CPU2D::CPU2D(SDL_Texture* screentex, SDL_Renderer* renderer, int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
+Hairline::Hairline(int width, int height, std::vector<uint32_t>* screenbuffer) //constructor
 {
-	texture = screentex;
-	sdlRenderer = renderer;
 	this->width = width;
 	this->height = height;
 	this->bufMain = screenbuffer;
 }
 
-void CPU2D::Clear(uint32_t color)
-{
-	std::fill(bufMain->begin(), bufMain->end(), color);
-}
-void CPU2D::Present()
-{
-	SDL_UpdateTexture(texture, nullptr, bufMain->data(), width * sizeof(uint32_t));
-	SDL_RenderCopy(sdlRenderer, texture, nullptr, nullptr);
-	SDL_RenderPresent(sdlRenderer);
-}
-
-void CPU2D::drawPoint(Point2d pt, int sizePx)
+void Hairline::drawPoint(Point2d pt, int sizePx)
 {
 	int offset = std::floor(sizePx / 2.0f);
 	for (int x = pt.x - offset; x < pt.x + offset + sizePx % 2; x++)
@@ -44,12 +31,12 @@ void CPU2D::drawPoint(Point2d pt, int sizePx)
 	return;
 }
 
-void CPU2D::drawLine(Point2d p1, Point2d p2, int stroke, uint32_t col)
+void Hairline::drawLine(Point2d p1, Point2d p2, uint32_t col, int stroke)
 {
 
 	if (p1.x == p2.x && p1.y == p2.y)
 	{
-		this->SetPixel(p1.x, p1.y, 0xFF808080);
+		this->SetPixel(p1.x, p1.y, col);
 		return;
 	}
 	if (p2.x - p1.x >= p2.y - p1.y)
@@ -73,13 +60,13 @@ void CPU2D::drawLine(Point2d p1, Point2d p2, int stroke, uint32_t col)
 		}
 		for (int i = 0; i <= p2.y - p1.y; i++)
 		{
-			this->SetPixel((int)(p1.x + (xStep * i)), p1.y + i, 0xFF808080);
+			this->SetPixel((int)(p1.x + (xStep * i)), p1.y + i, col);
 		}
 	}
 	return;
 }
 
-inline void CPU2D::SetPixel(int x, int y, uint32_t color)
+inline void Hairline::SetPixel(int x, int y, uint32_t color)
 {
 	int screenY = this->height - y;
 	if ((unsigned)x >= (unsigned)width || (unsigned)screenY >= (unsigned)height)

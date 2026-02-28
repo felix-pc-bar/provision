@@ -18,22 +18,36 @@ set(SDL2_ROOT "${CMAKE_SOURCE_DIR}/external/SDL2")
 
 add_executable(provision
     src/main.cpp
-    src/engine/render/components/CPU3D.cpp
-    src/engine/render/components/CPU3D.h
-    src/engine/engTools.cpp
-    src/engine/engTools.h
-    src/engine/logic2d.cpp
-    src/engine/logic2d.h
-    src/engine/engconfig.h
-    src/engine/engconfig.cpp
-    src/engine/import3d.cpp
-    src/engine/import3d.h
-    src/engine/game.cpp
+
     src/engine/game.h
+    src/engine/game.cpp
+
+    src/engine/render/components/CPU3D.h
+    src/engine/render/components/CPU3D.cpp
     src/engine/render/components/CPU2D.h
     src/engine/render/components/CPU2D.cpp
+
+    src/engine/general3d.h
+    src/engine/general3d.cpp
+
+    src/engine/general2d.h
+    src/engine/general2d.cpp
+
+    src/engine/globals.h
+    src/engine/globals.cpp
+
+    src/engine/import3d.h
+    src/engine/import3d.cpp
+
     src/engine/render/render.h
     src/engine/render/render.cpp
+
+    src/engine/quaternion.h
+    src/engine/quaternion.cpp
+
+    src/engine/material.h
+    src/engine/material.cpp
+
     src/app_icon.rc
 )
 
