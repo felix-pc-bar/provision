@@ -69,19 +69,21 @@ void Game::run()
 	}
 
 	mainScene.addObject(importObj("content/obj/raven.obj"));
-	mainScene.objects[1].materials.emplace_back(0.15f, 0.15f, 0.15f);
-	mainScene.addObject(importObj("content/obj/fTerrain.obj"));
-	mainScene.objects[2].materials.emplace_back(1.0f, 0.7f, 0.5f);
+	mainScene.objects[1].materials[0] = Colour("grey2");
+	mainScene.addObject(importObj("content/obj/sinai.obj"));
+	mainScene.objects[2].materials[0] = Colour("orange");
 	mainScene.addObject(importObj("content/obj/fCacti.obj"));
-	mainScene.objects[3].materials.emplace_back(0.25f, 0.95f, 0.3f);
+	mainScene.objects[3].materials[0] = Colour("green");
 	mainScene.addObject(importObj("content/obj/fRocks.obj"));
-	mainScene.objects[4].materials.emplace_back(0.33f, 0.33f, 0.33f);
+	mainScene.objects[4].materials[0] = Colour("grey3");
 	mainScene.addObject(importObj("content/obj/credit.obj"));
-	mainScene.objects[5].materials.emplace_back(0.8f, 0.8f, 0.5f);
+	mainScene.objects[5].materials[0] = Colour("red");
 	mainScene.addObject(importObj("content/obj/godray.obj"));
-	mainScene.objects[6].materials.emplace_back(1.0f, 1.0f, 1.0f, 0.5f);
+	mainScene.objects[6].materials[0] = Colour("white");
+	
 
 	mainScene.objects[1].mesh->move({ -100,40,0 });
+	mainScene.objects[1].mesh->quatIdentity = mainScene.objects[1].mesh->quatIdentity * Quaternion(pi/2, {1, 0, 0});
 
 	Quaternion qDelta(pi / 200, { 0,1,0 });
 	Quaternion camLookOffset(0.2f, { 1, 0, 0 }); // no rotation, or maybe slight pitch down if needed
@@ -96,6 +98,7 @@ void Game::run()
 
 	do
 	{
+		// ==== fps stuff ====
 		auto currentTime = dtclock::now();
 		std::chrono::duration<float> elapsed = currentTime - lastTime;
 		float dt = elapsed.count(); // Raw frametime (s)
@@ -115,7 +118,7 @@ void Game::run()
 			cout << fps << endl;
 		}
 
-		// Handle inputs
+		// ==== input stuff ====
 		mainScene.cams[0].calcCamData();
 		gk = SDL_GetKeyboardState(NULL); 
 		while (SDL_PollEvent(&event)){
@@ -140,7 +143,7 @@ void Game::run()
 				if (event.key.keysym.sym == SDLK_c) {globFreecam = !globFreecam;}
 			}
 		}
-		if (globFreecam)
+		if (globFreecam) // freecam movement
 		{
 			// Key hold events here
 			if (gk[SDL_SCANCODE_LSHIFT]) { freecamspeed = freecamspeedbase * 5 * dtFac; }
@@ -152,7 +155,7 @@ void Game::run()
 			if (gk[SDL_SCANCODE_E]) { mainScene.cams[0].pos += mainScene.cams[0].up * freecamspeed; }
 			if (gk[SDL_SCANCODE_Q]) { mainScene.cams[0].pos -= mainScene.cams[0].up * freecamspeed; }
 		}
-		else
+		else // Bird movement
 		{
 			mainScene.objects[1].mesh->calcBaseVecs();
 			float turnSpeed = 0.05f * dtMulti;
@@ -178,7 +181,7 @@ void Game::run()
 				roll += rsSpeed;
 			}
 
-			mainScene.objects[1].mesh->rotateAxis((roll * dtMulti) / -15.0f, { 0, 0, 1 }); 
+			mainScene.objects[1].mesh->rotateAxis((roll * dtMulti) / -15.0f, { 0, 1, 0 }); 
 
 			if (gk[SDL_SCANCODE_S] && pitch >= -0.32f) 
 			{	
@@ -198,19 +201,21 @@ void Game::run()
 
 			mainScene.objects[1].mesh->move(mainScene.objects[1].mesh->forward * flightSpeed * dtMulti);
 
-			Position3d camOffset(0, 4, -10);
-			camOffset.rotateQuat(mainScene.objects[1].mesh->quatIdentity);
+			Position3d camOffset(0, 4, -10); // Target position rel bird centre
+			camOffset.rotateQuat(mainScene.objects[1].mesh->quatIdentity); // otherwise its global-space offset, not bird local
 			mainScene.cams[0].pos = mainScene.objects[1].mesh->position + camOffset;
 		}
+
 		this->renderer->renderScene(*currentScene);
 		
+		// ==== Sky gradient logic ====
 		Position3d botVec = mainScene.cams[0].forward;
 		botVec.rotateQuat(Quaternion(mainScene.cams[0].fov / 2.0f, mainScene.cams[0].right));
 		float botInclination = botVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
 		Position3d topVec = mainScene.cams[0].forward;
 		topVec.rotateQuat(Quaternion(mainScene.cams[0].fov / -2.0f, mainScene.cams[0].right));
 		float topInclination = topVec.dot({ 0, 1, 0 }) / 2 + 0.5f;
-		this->renderer->clearGrad(Colour("grey"), Colour("grey4"), botInclination, topInclination);
+		this->renderer->clearGrad(Colour("blue"), Colour("darkblue"), botInclination, topInclination);
 
 		frame++;
 	}

@@ -99,7 +99,7 @@ void Razor3D::drawTri(Vertex3d& v1, Vertex3d& v2, Vertex3d& v3, Material& mat, C
 			value += 0.2f;
 			value = std::max(std::min(value, 1.0f), 0.01f);
 			ditherVal = (uint8_t)(value * 0xFF); 
-			rawColour = mat.colour.raw(); // rawColour set to what i want it to be
+			rawColour = mat.colour.raw();
 		}
 		else 
 		{

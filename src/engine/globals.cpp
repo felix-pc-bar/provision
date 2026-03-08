@@ -10,8 +10,8 @@ bool globFreecam = false;
 Position3d globLightNormal = Position3d(3.0f, 5.0f, 1.0f).normalise();
 
 
-int globScreenheight = 1080;
-int globScreenwidth = 1920;
+int globScreenheight = 360;
+int globScreenwidth = 640;
 
 /*
 1920x1080 /1
